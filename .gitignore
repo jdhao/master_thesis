@@ -4,3 +4,4 @@ Tmp/
 *.log
 *.synctex.gz
 *.pdf
+!Thesis.pdf
