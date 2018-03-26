@@ -1,0 +1,78 @@
+%!TEX root = ../Thesis.tex
+
+%---------------------------------------------------------------------------%
+%->> Titlepage information
+%---------------------------------------------------------------------------%
+
+%-> Chinese titlepage
+\confidential{} % 密级标记
+\schoollogo{scale=4.2}{ucas_logo}% university logo
+%\title[短标题(偶数页眉显示)]{完整标题}
+\title[基于卷积神经网络的图像检索方法研究]{基于卷积神经网络的图像检索方法研究}
+\author{郝杰东} % 作者姓名
+\advisor{谭铁牛~研究员} % 指导教师
+\advisorsec{} % 第二指导教师
+\degree{硕士} % 学位
+\degreetype{工学} % 学位类型
+\major{模式识别与智能系统} % 专业
+\institute{中国科学院自动化研究所}
+\chinesedate{2018~年~6~月}% customized date, 6 for summer and 12 for winter graduation
+
+%-> English titlepage
+\englishtitle{Research on Approaches for Image Retrieval\\ Based on Convolutional Neural Networks}
+\englishauthor{Hao Jiedong}
+\englishadvisor{Supervisor: Professor Tan Tieniu}
+\englishdegree{Master of Engineering}% degree type <Doctor|Master> of <Philosophy|Natural Science|Engineering>
+\englishthesistype{thesis}% thesis type <thesis|dissertation>
+\englishmajor{Pattern Recognition and Intelligent System}% major
+\englishinstitute{Institute of Automation, Chinese Academy of Sciences}
+\englishdate{June, 2018}% customized date
+
+%-> Create titlepages
+\maketitle
+\makeenglishtitle
+
+%-> Author's declaration
+\makedeclaration
+
+%-> Chinese abstract
+\chapter{摘\quad要}
+\setcounter{page}{1}% set page number
+\pagenumbering{Roman}% set large roman
+图像检索在计算视觉领域一个非常重要而且经典的研究方向，同时，相关的技术在工业界也有非常广泛的应用。尽管该问题已经被研究多年，但却仍然面临很多的挑战，例如图像中物体的尺寸，姿态以及图像光照的变化都给图像检索算法的性能带来严重的干扰。深度卷积神经网络作为一种很好的图像特征表达模型，在图像分类，物体检测和图像语义分割等领域都取得了巨大的成功。在本论文中，我们研究了基于深度卷积神经网络的图像检索方法，论文的工作以及主要的贡献如下：
+
+1. 提出了一种多尺度全卷积的图像实例检索方法。
+
+利用卷积神经网络提取图像特征进行检索已经有很多的工作出现，但是目前的工作并未对影响提取的图像特征有效性的因素进行详细分析，例如，图像缩放的策略，影响多尺度特征有效性的因素等，因此各种因素如何影响检索的性能仍然不得而知。在该工作中，我们对输入神经网络的图像尺寸缩放策略，提取图像多尺度特征的方式，以及 PCA 和白化矩阵学习这三个重要的因素进行了研究，通过实验分析了三个因素对检索结果的影响，在此基础上提出了多尺度全卷积的图像特征提取方法，我们的方法简单而有效。我们在 Oxford5k, Paris6k, Oxford105k 以及 UKB 这四个数据库上进行了实验，大量的实验结果表明我们提出的方法有着良好的检索效果。
+
+
+2. 建立一个大规模枪支图像数据库 Firearm14k
+
+在当前的社交网络上，充斥着各种各样的另普通用户不适的枪支图片，这些枪支图片可能会激起暴力等不良后果，因此有必要对枪支图片进行必要的监管与处理。基于深度卷积神经网络的方法，在模型的训练过程中往往需要大量的训练图片，否则学习到的模型很容易过拟合。当前并无一个大规模枪支图像数据库，为了方便研究者针对这个领域进行研究，我们收集了一个大规模的包含 167 类，总图片数为 14755 的枪支图像数据库。该数据库包含了真实世界的图片，因此图片中物体尺寸，姿态，背景等变化很大，识别难度较高，我们将其简称为 Fiream14k。该数据可以用做枪支图像分类研究，也可以用于枪支图片检索的研究。
+
+3. 提出了基于双阈值对比损失函数的枪支图像检索方法
+
+在社交网络或者是在取证领域，人们需要能够自动监管一些不适当的枪支图片或者鉴定枪支的类型等，基于图像检索的技术能够帮助人们有效解决此类问题。通过对已有的神经网络模型重新微调，基于卷积神经网络的检索方法取得了很好的效果。传统的单阈值对比损失函数，由于其简单并且有效，被大量使用，但是我们发现将损失函数用在 Firearm14k 图像库枪支检索上时，网络的表现并不好，原因有两点：第一，在网络训练过程中，正负图像对贡献的损失很难平衡；第二，Firearm14k 数据库与 ImageNet 数据库的图片风格差异巨大。我们提出了双阈值对比损失函数来解决网络训练中正负样本贡献的损失不平衡的问题；为了解决 Firearm14k 与 ImageNet 数据库的差异问题，我们使用了两步训练的策略，首先用分类任务微调网络，然后在使用检索任务微调网络。大量的实验表明我们的方法明显超过了传统的单阈值方法（超过 88.5\% 的效果提升），甚至超过了基于三元组损失的方法。
+
+\keywords{深度卷积神经网络，图像实例检索，多尺度特征表达，全卷积网络，双阈值对比损失函数，枪支检索}
+
+%-> English abstract
+\chapter{Abstract}
+Image retrieval is both an important and traditional research topic in computer vision. It has also been widely applied in the industry. Although it has been researched for a long time, image retrieval still faces a lot of challenges, for example, the large variation of object scale, pose and lighting conditions in different images. Deep convolutional neural networks, as an excellent model for represent image features, has achieved remarkable success in areas such as image classification, object detection and image semantic segmentation。In this paper, we study approaches for image retrieval based on deep convolutional neural networks. The main work and contributions are summarized as follows:
+
+1. A novel multi-scale fully-convolutional approach for visual instance retrieval
+
+There has been quite a lot work on using convolutional neural networks for image instance retrieval. But few work has given a detailed analysis on the various factors that impact the effectiveness of image features extracted from the network. The impact of some of the factors such as image resizing strategy, multi-scale feature representation, has not been fully explored. In this work, we studied the image resizing strategy, the way to extract multi-scale image features and the suitable way to learn PCA and whitening matrix and analyzed their impact on retrieval performance. Based on our analysis and experimental results, we propose a multi-scale fully approach for visual instance retrieval. We conduct experiments on four datasets, i.e., Oxford5k, Paris6k, Oxford105k and UKB. Experiment results show that our method shows promising results compared to other state-of-the-art methods.
+
+2. We build a large firearm image dataset named Firearm14k
+
+The proliferation of firearm images in the social media may incite violence. So we need to properly regulate these shocking firearm images. For approaches based on deep convolutional neural networks, the model is data-hungry during the training process, or the model may be over-fitting on the dataset. Right now, no large dataset of firearm images exists. To facilitate research in this area, we build a large scale firearm dataset, which is consisted of 14,755 images from 167 category of various gun types. The dataset contains images from real world, which has large variability in object size, pose and background etc. and is challenging to recognize. This dataset, named Firearm14k, can be used both for research on firearm image classification and firearm image retrieval.
+
+3. An approach for firearm image retrieval based on double margin contrastive loss
+
+There are great need for automatically regulating shocking firearm images in social media or identifying firearm types in forensic science. Image retrieval techniques have a great potential to solve such problems. Recent advances in image retrieval are mainly driven by fine-tuning state-of-the-art convolutional neural networks for retrieval task. The contrastive loss, known for its simplicity and good performance, has been widely used. We find that it performs poorly for the Firearm 14k dataset due to: (1) Loss contributed by positive and negative image pairs during training is unbalanced. (1) A huge domain gap exists between this dataset and ImageNet. We propose to deal with the unbalanced loss by employing a double margin contrastive loss. We tackle the domain gap issue with a two-stage training strategy, where we first fine-tune the network for classification and then fine-tune it for retrieval. Extensive experiments show that our approach outperforms the conventional single margin approach significantly (up to 88.5\% relative improvement) and even surpasses the strong triplet-loss-based approach.
+
+
+\englishkeywords{deep convolutional neural network, visual instance retrieval, multi-scale feature representation, fully-convolutional network, double margin contrastive loss, firearm retrieval}
+
+

@@ -1,0 +1,65 @@
+%!TEX root = ../Thesis.tex
+
+\chapter{图像检索方法综述}\label{chapter:overview_related_work}
+
+\section{概述}
+图像检索是一个经典的研究问题，研究者们围绕这个问题提出了很多的解决方法。图像检索问题的核心是如何表示图像的内容，也就是说如何用数字化的方式来表达图像的中的物体和场景，这种数字化的表达可以称之为图像的特征，第二个问题是图像的特征如何存储的问题，另外一个重要的问题是如何衡量图像特征之间的相关性（relevance）或者相似性（similarity），大量的研究都围绕这些问题展开。
+
+早期的图像检索方法试图从图像中提取一些局部或者全局的颜色以及纹理信息作为图像的特征，然后使用不同的图像相关性计算方法来计算两个图像之间的相似性，由于当时计算资源等的限制，这些方法使用的特征大都比较简单，并且使用的图像数据库规模并不大，多在几百到一千的范围内。
+
+到了 2000 年以后，随着 SIFT~\cite{Lowe1999ObjectRF}提出，由于 SIFT 特征描述子对图像旋转，尺度缩放，光照变化等因素有一定的鲁棒性，因而成为主流的图像局部特征描述方法。此后的图像检索方法大都使用基于 SIFT 局部特征描述子的方法来提取图像特征。基于 SIFT 特征的视觉词袋的方法（bag of features， BOF）是一种常用的图像特征表示方法，研究者在该方法基础上进行了大量的改进与创新，使得该方法成为一种检索效果出色的方法。除了 BOF 方法，也有研究者研究基于 SIFT 特征的局部描述子聚合向量方法（vector of locally aggregated descriptor，VLAD）或者 Fisher 特征向量方法等。
+
+随着卷积神经网络在图像分类~\cite{Russakovsky2015ImageNetLS,Simonyan2014VeryDC,Szegedy2015GoingDW,He2016DeepRL}，物体检测~\cite{Liu2016SSDSS,Redmon2016YouOL,Lin2017FocalLF,Ren2017FasterRT}，图像语义分割~\cite{Shelhamer2017FullyCN,Chen2018DeepLabSI,Noh2015LearningDN}等任务取得了超越传统方法的结果，图像检索领域的研究者们将研究方向转向了基于卷积神经网络的图像检索，提出了一系列的方法，例如，直接提取图像的全连阶层或者卷积层的输出，作为图像的特征，或者，对已有的神经网络模型进行微调，从而改进得到的特征在检索任务上的效果等。
+
+在本章接下来的部分，我们首先介绍一些早期的研究图像检索方法的探索性工作，接着我们介绍基于 SIFT 特征描述子的图像检索方法，然后对卷积神经网络的相关发展给出简要回顾，并介绍一些基于卷积神经网络的图像检索方法，最后对本章的内容进行总结。
+
+\section{早期图像检索方法}
+颜色是图像的一种重要特征，Swain 和 Ballard~\cite{Swain1991ColorI} 首先提出使用彩色图像的多维颜色直方图作为图像的特征，他们使用直方图交叉（histogram intersection）方法确定两个图像之间的相关性，他们发现颜色直方图特征能够在一定程度上对物体的在图像上的平移，遮挡以及视角变化等有一定鲁棒性。然而，Swain 和 Ballard 的方法对图像的光照有一定的要求，各个图像的光照条件不能差异太大，如果光照差异太大，该方法需要首先对图像进行预处理~\cite{Forsyth1990ANA}来消除光照变化影响，为了克服这个问题，Funt 和 Finlayson 提出了光照无关的图像颜色直方图特征~\cite{Funt1995ColorCC}。Deng 等人~\cite{Deng2001AnEC}则提出使用聚类方法对图像局部颜色聚类，得到具有代表性的颜色，然后分别使用这些有代表性的颜色来匹配包含这些颜色的图像，最后来自不同代表性颜色的匹配被融合在一起，得到最终的检索结果。也有一些研究者使用纹理以及形状等信息作为图像特征，Manjunath 和 Ma~\cite{Manjunath1996TextureFF}提出设计 Gabor 小波的滤波器，利用 Gabor 小波来分析和代表图像的纹理信息。Niblack 等人~\cite{Niblack1993TheQP}在 QBIC 项目中则使用了多种特征来表示图像，包括颜色，纹理，形状以及速写特征等，其中颜色特征采用了直方图特征，纹理特征则结合粗糙度，对比度以及方向特征等，形状特征则结合二值画图像中的形状区域面积、圆度、奇异度以及代数矩不变量等信息，速写特征则是基于降低分辨率以后的图像边缘图信息。Jain 和 Vailaya~\cite{Jain1996ImageRU}提出使用颜色以及形状信息进行图像检索，他们使用的形状特征是由图像的边缘信息得来的（使用 Canny 边缘提取算法提取图像的边缘信息）。更多的关于早期图像检索的方法，可以参考 Smeulders 等~\cite{Smeulders2000ContentBasedIR}的综述。
+
+
+\section{基于 SIFT 特征描述子的检索方法}
+SIFT 是最常用的图像局部特征描述子，具有良好的旋转以及尺度不变性，传统的图像检索的很多方法都是基于 SIFT 描述子来得到图像的特征，然后再进行图像检索的后续过程。 基于 SIFT 描述子的方法，可以分为 BOF 方法，VLAD 以及 Fisher 向量等方法，其中 BOF 是最经典的方法，本节先介绍 BOF 方法，然后再介绍其他方法。
+
+
+\subsection{基于视觉词袋模型（BOF）的检索方法}
+BOF 方法~\cite{OHara2011IntroductionTT,Nowak2006SamplingSF,Yang2007EvaluatingBR}来源于信息检索（information retrieval，IR）领域非常流行的词袋（bag of words，BOW）方法~\cite{manning2008introduction,Salton1975AVS}，该方法将图像看成是一些「视觉词汇」的集合，除了可以应用到图像检索领域，也常用于图像分类等任务。BOF 方法的工作原理大致如下：
+
+步骤一：采用一些兴趣点检测算法~\cite{Mikolajczyk2004ScaleA}检测到一些尺度及仿射不变的兴趣点，或者直接将图像分成规则的小块，然后使用 SIFT 局部特征描述子提取算法提取数据库中每张图像的 SIFT 特征。
+
+步骤二：使用 K-means 等聚类算法，对数据库中所有图片得到的 SIFT 特征进行聚类，得到 $K $ 个聚类中心，该聚类中心称为视觉词汇（visual words），其中 $K$ 是一个可以调节的超参数。
+
+步骤三：对于每一张图像中的 SIFT 特征描述子，将其分配给距离最近的视觉词汇，得到对应于每张图像的视觉词汇频率特征，经过归一化等操作，该特征就是该图像的特征，用于后续的分类或者检索等任务。
+
+Sivic 和 Zisserman~\cite{Sivic2003VideoGA}于 2003 年第一次提出使用 BOF 方法来进行图像检索，在该工作中，作者借鉴使用了逆文档频率（inverse document frequency，IDF），停用词（stop words）等文档检索中的常用技术。Sivic 与 Zisserman~\cite{Sivic2003VideoGA}文章中用到的数据库图片样本比较少，如果数据库样本比较大，从所有图片中提取的 SIFT 描述子的数目将非常庞大，传统的 K-means 算法无法有效聚类大量的 SIFT 特征描述子，从而生成视觉词汇，因此 Philbin 等人~\cite{Philbin2007ObjectRW}对比了两种 K-means 的改进方法：近似 K-means （approximate K-means，AKM）以及层次 K-means 方法（hierarchical K-means, HKM）。作者使用了不同的视觉词汇大小来测试两种聚类方法的性能，发现 AKM 方法比 HKM 方法能够得到更好的检索效果。传统的 BOF 方法，得到视觉词汇以后，对于一张图片中的 SIFT 描述子，其权重会完全分配给距离该描述子最近的一个视觉词汇，如果一个 SIFT 描述子同时距离两个视觉词汇都非常相近，以这样的分配方式来计算词频向量显然是有问题的，会损失图像原有的信息。从直觉上来说，如果一个描述子同时距离几个视觉词汇都很近，那么显然该描述子可以按照距离远近给这几个视觉词汇同时赋予一定的权重，Philbin 等人~\cite{Philbin2008LostIQ}即是按照这个思路对原有的 BOF 方法进行了改进，作者称之为软分配（soft asignment）。另外一种对原有 BOF 方法的改进来自 J{\'e}gou 等人~\cite{Jgou2008HammingEA}，该文章提出汉明空间嵌入方法（Hamming embedding, HE）对于查询图像与数据库图像，如果分别来自这两张图像的两个描述子对应于同一个视觉词汇，那么这两个描述子对最后的相似度得分不一定有贡献，我们需要把原有的视觉词汇所在的空间进行进一步细分，得到每个描述子在这个细分的空间中的一个二进制编码，只有当这两个描述子编码的距离小于一个阈值，才对两幅图像之间的相似度有贡献。传统的 BOF 方法得到特征通常维度相当高，不适用于大规模图像检索场景，因此 J{\'e}gou~\cite{Jgou2009PackingB}提出近似方法来代表 BOF 特征，压缩图像特征维度，他们提出的方法的检索速度要比传统的 BOF 快一个数量级。
+
+查询扩展（query expansion，QE）也是信息检索领域常用的一种方法，QE 就是把检索返回的结果与初次的查询目标进行融合，试图弥补原有方法对初次查询信息表达的不足，希望能够得到原有查询的更加全面的表达，Chum 等人~\cite{Chum2007TotalRA}对这个方法在图像检索领域的使用进行了全面的研究，对不同的查询扩展的方式进行了试验，试图确定最佳的查询扩展方式。也有论文从其他方面进行了探索，Mikulík 等人~\cite{Mikulk2010LearningAF}针对原有的 BOF 方法计算图像相似度的不足，提出了一种使用概率方法估计查询图像和数据库图像相似度的方法，该相似度通过非监督方式学习得到，效果要优于 HE 以及 soft assignment。Arandjelovi{\'c} 和 Zisserman~\cite{Arandjelovic2012ThreeTE}则试图对原有的 SIFT 特征描述子进行改进，提出使用 RootSIFT 来代替原有的 SIFT 特征，发现能够取得更好的效果。
+
+\subsection{基于 VLAD 和 Fisher Vector 的检索方法}
+BOF 方法把图像看成是没有空间关系的一系列小块的组合，Fisher Vector 方法~\cite{Perronnin2007FisherKO}把一张图片上所有 SIFT 特征描述子看成是对一个混合高斯模型采样得到的样本点，在此基础上，可以得出高斯混合模型相对于每个高斯分量的平均值的梯度，然后把对于所有分量的梯度拼接起来，作为图像的特征表达。原始的 Fisher Vector 维度很高，并且是非稀疏的，Perronnin 等人~\cite{Perronnin2010LargescaleIR}提出一种简单的压缩办法来给 Fisher Vector 降维，发现这种方法效果要优于哈希的方法。Douze 等人~\cite{Douze2011CombiningAA}则试图把属性特征与 Fisher Vector 融合起来作为图像特征来进行图像检索。
+
+Fisher Vector 特征计算复杂，计算量大，受 Fisher Vector 启发，VLAD 简化了 Fisher Vector 的操作，可以认为是 Fisher Vector 的简化版本，VLAD 最早由 J{\'e}gou 等人于 2010 年提出~\cite{Jgou2010AggregatingLD}，VLAD 方法同样需要计算 BOF 中用到的视觉词汇，不同于 BOF 的是，VLAD 把图像中分配给某个视觉词汇的 SIFT 描述子与该视觉词汇求残差和（residual sum），作为图像特征表达的一个分量，最后将对应于每一个视觉词汇的残差和向量拼接起来，作为图像的特征表达，因此 VLAD 特征维度要高于对应的 BOF 特征。Arandjelovi{\'c} 和 Zisserman~\cite{Arandjelovic2013AllAV}对原始 VLAD 操作的一些步骤进行了改进，提出对图像 VLAD 特征的每一个残差和分量分别归一化，而不是整体拼接再进行归一化，作者发现这样的归一化操作可以减少图像的突变特征~\cite{Jgou2009OnTB}，有助于提升最终检索的精度，同时作者也提出使用 Multi-VLAD 来替代原始的单一尺度下的 VLAD，可以认为 Multi-VLAD 是普通 VLAD 方法的多尺度版本。
+
+\section{基于卷积神经网络的图像检索方法}\label{sec:review_cnn_image_retrieval}
+\subsection{卷积神经网络简介}
+卷积神经网络（convolutional neural network，CNN）由 Le Cun 等人提出~\cite{Lecun1990HandwrittenZC,LeCun1998GradientbasedLA}，最初用于邮政编码图像中手写数字的识别问题。不同于传统的多层感知机神经网络（multi-layer perceptron，MLP），CNN 专门为处理图像内容所设计，典型的 CNN 包含卷积层（convolutional layer），池化层（pooling layer），非线性激活函数（non-linear activation）以及全连接层（fully-connected layer）等结构，其中，卷积层的包含一系列的滤波核，通过训练，这些滤波核可以学习到图像中不同的模式~\cite{Zeiler2014VisualizingAU,Krizhevsky2012ImageNetCW}，卷积层的权重被设计为共享方式，通过滑动窗口（sliding window）的方式提取上一层的输出信息，相比于传统的 MLP，大大降低了参数的数量，卷积层的设计也使得网络对图像中物体的平移有一定的鲁棒性；卷积层后面通常是池化层，通过池化操作，CNN 对物体的扭曲以及变化有一定的鲁棒性；非线性激活函数可以有多种选择，如 tahn 函数，ReLU~\cite{Glorot2011DeepSR}，PReLU~\cite{He2015DelvingDI}和 Leaky ReLU~\cite{maas2013rectifier}等，非线性激活函数使神经网络不仅仅能够表达简单的线性关系，也能够表达复杂的非线性关系；全连接层则相当于分类器，对图像进行分类。在神经网络的结构中，卷积层，池化层，非线性激活函数通常构成一个完整模块，该模块被重复多次，形成多层神经网络，通过这种由低层到高层的结构，网络能够在低层学习图像的一些低级特征，如线条，形状等特征，在高层，则能够学习到更加高级的特征，如代表图像类别的语义信息~\cite{Krizhevsky2012ImageNetCW}。
+
+虽然卷积神经网络在 90 年代初已经被提出，但是并未引起很大的轰动，一方面因为当时的硬件无法支持大规模的训练，另外一方面，当时不存在大规模的图像数据库。即使到了 2000 年以后，人们还在使用受限玻尔兹曼机（restricted Boltzmann machine，RBM）~\cite{Salakhutdinov2009DeepBM,Salakhutdinov2012AnEL}来学习图像的特征，深度 RBM 训练十分复杂，需要首先进行逐层的无监督的预训练，然后最后才能进行监督式的训练。到了 2012 年，随着 GPU 等硬件的成熟以及 ImageNet~\cite{Russakovsky2015ImageNetLS}大规模数据库的提出，Krizhevsky 等人首次~\cite{Krizhevsky2012ImageNetCW}展示，使用大量的训练数据，直接对深度神经网络进行监督式训练，在图像分类任务上取得了大幅度超越前人的结果。在这之后，研究对深度神经网络的研究掀起了热潮，神经网络的结构以及深度也在不断变化~
+\cite{Zeiler2014VisualizingAU,Simonyan2014VeryDC,Szegedy2015GoingDW,He2016DeepRL,Huang2017DenselyCC}；另一方面，研究者也将基于深度卷积神经网络的方法应用到各个领域，如物体检测~\cite{Liu2016SSDSS,Redmon2016YouOL,Lin2017FocalLF,Ren2017FasterRT}，图像语义分割~\cite{Shelhamer2017FullyCN,Chen2018DeepLabSI,Noh2015LearningDN}，图像风格转换~\cite{Gatys2016ImageST,Johnson2016PerceptualLF}，生成对抗网络~\cite{Goodfellow2014GenerativeAN,Mirza2014ConditionalGA}，深度强化学习~\cite{Mnih2015HumanlevelCT,Silver2016MasteringTG}等等。
+
+研究者们也将研究转向基于深度卷积神经网络的检索方法，基于深度学习的方法，按照是否需要进行训练，可以分为两类方法，第一类是基于已有网络模型提取特征（off-the-shelf）的方法，第二类则是在已有模型基础上进行微调（fine-tuning）的检索方法。我们之前的工作~\cite{Hao2017MFCAM}（见第~\ref{chapter:mfc}~章）属于利用已有的网络提取特征的方法，在第~\ref{chapter:double_margin}~章，我们提出的基于双阈值对比损失函数的方法则是属于微调神经网络的方法。
+
+\subsection{基于神经网络直接提取图像特征的检索方法}
+
+基于已有神经网络模型提取特征的方法，通常采用在 ImageNet 分类数据库上训练的模型，如常见的 AlexNet~\cite{Krizhevsky2012ImageNetCW}，VGGNet~\cite{Simonyan2014VeryDC}，RestNet~\cite{He2016DeepRL} 等。输入图像以后，提取 CNN 的全连接层或者是卷积层输出，进行后处理，作为图像的特征，这种方法的优点是速度比较快，不需要对网络再进行有监督的训练，也适用于数据库样本量很小无法进行训练的情况。Krizhevsky 等人~\cite{Krizhevsky2012ImageNetCW}在原始的 ImageNet 文章中就指出，可以用 CNN 全连接层的输出作为图像特征，进行粗略的检索任务，如果两幅图像的特征的欧式距离相近，那么说明两幅图像是相似的。Razavian等人~\cite{Razavian2014CNNFO}直接使用全连接层的特征作为图像的特征表达，在进行图像检索时，他们提取了查询图像与数据库图像在不同尺度的小块，用滑动窗口的方式确定每个尺度下查询图像与数据库图像的相似度，然后取各个尺度下的最大相似度的平均值作为查询图像与数据库图像的相似度，该方法效果不错，但是缺点是十分耗时。Gong等人~\cite{Gong2014MultiscaleOP}提出了一种被称为 multiple orderless pooling （MOP）的图像特征表示方法，该方法使用 AlexNet 全连接层输出作为一张图像的原始特征，在三个尺度上提取图像特征，在尺度 2 和 3 上，对图像块特征使用 VLAD 方法进行特征聚合并且使用 PCA 对特征降维。最后将三个尺度的特征拼接起来，作为图像最终的特征表达，显而易见，该方法同样非常耗时。Ng 等人~\cite{Ng2015ExploitingLF}从卷积神经网络的不同层提取特征，并且结合 VLAD 编码方法，得到图像的特征。与此同时，Babenko 等人~\cite{Babenko2014NeuralCF}研究了使用 CNN 哪一层的特征更有效的问题：CNN 全链接层的输出通常代表图像整体上的信息，更适合分类任务，对于图像检索任务，这种特征会缺乏一些细节信息，而中间的卷积层特征，有更丰富的图像的局部信息。
+
+Babenko 和 Lempitsky~\cite{Babenko2015AggregatingLD}使用 CNN 卷积层的特征作为图像的特征表达，由于卷积层输出的特征图是二维的，作者提出 sum pooling of convolutions（SPoC）方法来聚合特征，该方法对特征图的元素进行加权求和，作者假设物体一般位于图像中间，因此特征图中间的元素被赋予更大的权重。Tolias 等人~\cite{Tolias2015ParticularOR}也选择使用卷积层的输出作为图像的特征，但是与 Babenko 和 Lempitsky~\cite{Babenko2015AggregatingLD}做法不同，该论文对特征图使用最大池化方法，为了增强图像特征有效性，作者提出了 regional maximum activation of convolutions（R-MAC）方法，该方法为多尺度特征表达方法，在求图像区域特征时，并不直接图像区域重新送入 CNN 网络提取特征，而是仿照 ROIpooling 的想法~\cite{Ren2017FasterRT}，假定图像区域和特征图上的区域存在线性映射，直接在特征图上求图像区域特征，最后对不同尺度的特征进行融合。Seddati 等人~\cite{Seddati2017TowardsGP}则提出了对 R-MAC 方法的一些改进。Zhou 等人~\cite{Zhou2017CollaborativeIE}提出结合经典的 SIFT 特征与神经网络提取的图像特征，共同编码图像，也取得了良好的效果。
+
+\subsection{微调已有网络提取图像特征的检索方法}
+
+直接从已有网络提取图像特征的方法有一定的局限性，因为这些模型都是针对图像分类任务训练，并不是特别针对图像检索的任务，并且这些模型都是在 ImageNet 数据库上训练，并不能很好地应对数据库风格发生巨大变化的情况。因此，针对特定的数据，对网络进行微调，能够进一步提升图像检索的准确率。
+
+Babenko 等人~\cite{Babenko2014NeuralCF}针对检索任务，重新收集了一个较大的 Landmark 数据库，在这个数据库，使用分类损失函数，对 AlexNet 网络的参数值进行了微调，作者发现这种微调对于提升在某些数据库上的检索准确率有一定帮助，因为这些数据库与微调使用的数据库图片比较类似，值得一提的是，该文章直接使用的是全链接层的输出，并未使用多尺度的方法，并且虽然他们对网络进行了微调，但是使用的是还是分类的损失函数，并未针对检索的任务。在检索任务中，通常希望相似或相关的图像与查询图像特征距离要小于不相似图像与查询图像的距离，为了这个目标，研究者也提出了各种基于度量学习的方法。三元组网络（triplet network）~\cite{Wang2014LearningFI,Schroff2015FaceNetAU}在度量学习中应用广泛，Wang 等人~\cite{Wang2014LearningFI}较早的使用 triplet network 进行图像检索的工作，他们收集了一个大规模的图像库，作者在文中提出使用多尺度的图像特征，并且提出了采样训练所用的 (anchor, positive, negative) 三元组的算法。Arandjelovi{\'c} 将弱监督形式下的三元组损失（triplet loss）应用到地点检索任务上，并结合传统的 VLAD 方法，提出了 NetVLAD 层，该方法能够有效进行地点检索，学习的特征区分度高，能够有效忽略一些背景的干扰。现有图像检索，图片中物体并未对齐，因此物体在图片中位置以及大小都不定，这给提取特征带来了巨大挑战，Gordo 等人~\cite{Gordo2016DeepIR} 提出使用 region proposal network（RPN），找出图像中可能的物体区域，从而提取更加有效的特征，同时作者提出了一种自动清洗噪声数据的方法，并且采用算法自动估计图片中物体的框，避免了耗时费力的人工标注。Siamese 网络~\cite{Bell2015LearningVS,Hadsell2006DimensionalityRB}也是一种常见的度量学习网络，Radenovic 等人~\cite{Radenovic2016CNNIR}使用了两个分支的 Siamese 网络，利用单阈值对比损失函数来监督网络的训练，该论文使用了 structure from motion 技术，构建三维模型来挑选训练图像对，这是一种全自动的方法，不需要人工的干预即可选出训练样本。以上提到的这些方法都是学习到了图像的全局特征，全局特征对图像检索任务有时并不有效，因此 Noh 等人~\cite{Noh2017LargeScaleIR}提出利用分类任务并结合显著性检测来学习深度局部特征，然后使用传统的图像匹配的算法来计算图像相似度，在他们收集的超过 100 万的数据库上效果超过了现有的方法。
+
+
+\section{本章小结}
+本章中，我们简要回顾了基于颜色、形状等特征的传统图像检索方法，然后我们介绍了基于 SIFT 特征的方法：分别是基于 BOF 的图像检索方法以及基于 VLAD 和 Fisher Vector 的图像检索方法。在\ref{sec:review_cnn_image_retrieval}~节，我们介绍了两种常见的基于深度卷积神经网络的图像检索方法，第一种是基于已有神经网络直接提取特征的方法，该方法简单且无需额外训练数据，但是精度不高且有一定限制，第二种方法是微调已有模型的方法，这种方式针对检索任务，采用端到端训练的方式优化模型参数，在检索任务上能够取得更好的效果。
