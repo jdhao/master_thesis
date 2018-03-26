@@ -1,6 +1,6 @@
 %!TEX root = ../Thesis.tex
 
-\chapter{基于多尺度全卷积网络的图像实例检索方法}\label{chapter:mfc}
+\chapter{基于多尺度全卷积网络的精细图像检索方法}\label{chapter:mfc}
 \section{引言}
 图像检索是学术界以及工业界都非常关注的一个问题，按照检索的精细程度来分类，我们可以把图像检索方法分为两大类：第一类是基于类别的检索，在这种设定下，只要返回的某个搜索结果与查询图片属于同一大类（如「车」，「猫」，「狗」等），就认为该结果和查询图像是相关的；另外一类方法是精细检索，在本章中，我们研究的是图像实例级别的检索，在这种情况下，只有当返回的图片包含和查询图片相同的物体实例或者场景的情况下，我们才认为该图片与查询图片相关。在本章中，我们研究的基于实例的精细图像检索方法，尽管该问题是一个经典问题~\cite{Sivic2003VideoGA,Nistr2006ScalableRW,Philbin2007ObjectRW,Razavian2014CNNFO,Babenko2014NeuralCF,Tolias2015ParticularOR,Babenko2015AggregatingLD}，前人的研究已经提出了很多的方法，但是由于图像中物体尺寸，方向，位置以及光照等条件影响，在不同图像上变化很大，该问题仍然是一个值得研究的问题。
 
@@ -79,18 +79,18 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 \text{mAP} = \frac{\sum_{q=1}^{Q}AP(q)}{Q}
 \end{equation}
 
-公式\ref{eq:mean_avg_prec}中，$AP(q)$ 代表某个查询 $q$ 对应的平均准确率，$Q$ 代表所有查询的数目。
+公式~\ref{eq:mean_avg_prec} 中，$AP(q)$ 代表某个查询 $q$ 对应的平均准确率，$Q$ 代表所有查询的数目。
 
 \noindent\textbf{（2）数据库}
 
-\textbf{Oxford5k} 数据库\cite{Philbin2007ObjectRW}包含了 5062 张从 Flickr 上抓取的 Oxford 建筑图片。该数据库总共包含 55 个查询图像，每个查询图像包含有具体查询区域的坐标，在实验中对于每一幅查询图像，我们使用了两种查询，分别是 \emph{full-query}(使用整个查询图像) 和 \emph{cropped-query}(使用坐标指定区域内的图像)。在该数据库上的评价指标为 mAP。
+\textbf{Oxford5k} 数据库~\cite{Philbin2007ObjectRW} 包含了 5062 张从 Flickr 上抓取的 Oxford 建筑图片。该数据库总共包含 55 个查询图像，每个查询图像包含有具体查询区域的坐标，在实验中对于每一幅查询图像，我们使用了两种查询，分别是 \emph{full-query}(使用整个查询图像) 和 \emph{cropped-query}(使用坐标指定区域内的图像)。在该数据库上的评价指标为 mAP。
 
-\textbf{Paris6k} 数据库\cite{Philbin2008LostIQ}包含了 6412 张来自巴黎的建筑图片\footnote{按照惯例，该数据有 20 张被损坏的图片被去掉，因此实际图片数量是 6392。}。与 Oxford5k 数据库类似，该数据库也包含了 55个 查询图像，同时附带每个图像对应的感兴趣区域的坐标。在这个数据库上的评价指标是 mAP。
+\textbf{Paris6k} 数据库~\cite{Philbin2008LostIQ} 包含了 6412 张来自巴黎的建筑图片\footnote{按照惯例，该数据有 20 张被损坏的图片被去掉，因此实际图片数量是 6392。}。与 Oxford5k 数据库类似，该数据库也包含了 55个 查询图像，同时附带每个图像对应的感兴趣区域的坐标。在这个数据库上的评价指标是 mAP。
 
-\textbf{Oxford105k} 数据库包含了的是 Oxford5k 数据库的图片以及额外 100,000 张来自 Flickr 的图片\footnote{有一张损坏图片 \verb+oxc1_100k\portrait\portrait_000801.jpg+ 被移除}~\cite{Philbin2007ObjectRW}。这 100,000 张
+\textbf{Oxford105k} 数据库包含了的是 Oxford5k 数据库的图片以及额外 100,000 张来自 Flickr 的图片\footnote{有一张损坏图片 \verb+oxc1_100k\portrait\portrait_000801.jpg+ 被移除}~\cite{Philbin2007ObjectRW}。这 100000 张
 图片与 Oxford5k 没有相同的图片，被用来作为干扰图片，主要是为了验证数据库规模扩大时的算法的性能。在这个数据库上的评价指标与 Oxford5k 完全一致。
 
-\textbf{UKB} 数据库\cite{Nistr2006ScalableRW}总包含了 2550 个物体的 10200 张照片，每个物体 4 张照片。实验时，每张图片被用作查询图片去查询其他图片（包含该图片本身），在这个数据上的评价指标比较特殊，用返回的前四张图片与查询图片相似的平均数目来衡量，是区间 $[0,4]$ 上的一个数，也就是 $4\times recall@4$。
+\textbf{UKB} 数据库~\cite{Nistr2006ScalableRW} 总包含了 2550 个物体的 10200 张照片，每个物体 4 张照片。实验时，每张图片被用作查询图片去查询其他图片（包含该图片本身），在这个数据上的评价指标比较特殊，用返回的前四张图片与查询图片相似的平均数目来衡量，是区间 $[0,4]$ 上的一个数，也就是 $4\times recall@4$。
 
 \subsection{实验结果与分析}
 在本部分，我们对不同的因素对检索结果影响进行了详细的实验，并给出相应的分析。
@@ -99,7 +99,7 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 \noindent\textbf{（1）图像尺寸变化对检索的影响}
 
 我们对\ref{subsec:img_resize_strategy}节给出的三种图像尺寸变化的策略进行了实验，对于 \emph{two-fixed} 和
-\emph{one-fixed} 策略，由于图像的尺寸可以选择多种，我们使用网格搜索来找到性能最好时对应的图像尺寸。我们发现，总体来说，增加图像的尺寸，对于 \emph{full-query} 或者 \emph{cropped-query} 这两种情况，都会提升检索的效果，试验结果如表~\ref{table:image_size_impact}所示，表中括号后面的数字表示取得最好的 mAP 时使用的图像尺寸。从表上可以看出，对于 \emph{cropped-query} 这种情况，\emph{free} 策略能够有效地提升检索的性能，对于 \emph{full-query}，\emph{free} 与 \emph{one-fixed} 策略则比较接近，但检索的效果都要好于 \emph{two-fixed} 策略。我们可以看出 \emph{one-fixed} 策略此时要稍高于 \emph{free} 策略，但是 \emph{one-fixed} 情况下，图像最小的边长度被固定在 800，这种设置将大大增加提取特征所需要的计算时间，因为数据库中大部分图像最小尺寸都要小于 800（在表\ref{table:min_size_distribution}中，我们列出不同数据库中的图像最小边尺寸的统计信息）。采用 \emph{free} 方式，我们减少特征提取提取时间，并且能够取得很好的检索结果。
+\emph{one-fixed} 策略，由于图像的尺寸可以选择多种，我们使用网格搜索来找到性能最好时对应的图像尺寸。我们发现，总体来说，增加图像的尺寸，对于 \emph{full-query} 或者 \emph{cropped-query} 这两种情况，都会提升检索的效果，试验结果如表~\ref{table:image_size_impact}所示，表中括号后面的数字表示取得最好的 mAP 时使用的图像尺寸。从表上可以看出，对于 \emph{cropped-query} 这种情况，\emph{free} 策略能够有效地提升检索的性能，对于 \emph{full-query}，\emph{free} 与 \emph{one-fixed} 策略则比较接近，但检索的效果都要好于 \emph{two-fixed} 策略。我们可以看出 \emph{one-fixed} 策略此时要稍高于 \emph{free} 策略，但是 \emph{one-fixed} 情况下，图像最小的边长度被固定在 800，这种设置将大大增加提取特征所需要的计算时间，因为数据库中大部分图像最小尺寸都要小于 800（在表~\ref{table:min_size_distribution} 中，我们列出不同数据库中的图像最小边尺寸的统计信息）。采用 \emph{free} 方式，我们减少特征提取提取时间，并且能够取得很好的检索结果。
 
 实验表明，改变图像的长宽比 (对应 \emph{two-fixed} 策略)对图像信息的干扰最大，因此检索的精度有明显的下降。\emph{one-fixed} 策略虽然没有改变图像的长宽比，但是由于图像尺寸的变化，仍然有一部分信息的丢失。\emph{free} 方式能够编码图像未经扭曲与破坏的信息，因而得到的特征效果更好，能够取得更好的检索结果。
 
@@ -136,7 +136,7 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 
 \noindent\textbf{（2）图像的多尺度特征表达}
 
-首先我们通过实验比较了\ref{subsec:multiscale_img_repr}节提出的区域特征以及尺度特征融合策略，实验结果表明前两种特征融合策略效果不如第三种策略。如果使用第一种策略，检索效果比第三种策略要低 41\%。同时，使用前两种方法得到的图像特征维度（维度至少为 1500 维）也要高于第三种策略（特征维度为 512 维）。高纬度特征也会使得检索时间变长，综合考虑这些，我们采用第三种方式来融合不同的特征。
+首先我们通过实验比较了 \ref{subsec:multiscale_img_repr}~节提出的区域特征以及尺度特征融合策略，实验结果表明前两种特征融合策略效果不如第三种策略。如果使用第一种策略，检索效果比第三种策略要低 41\%。同时，使用前两种方法得到的图像特征维度（维度至少为 1500 维）也要高于第三种策略（特征维度为 512 维）。高纬度特征也会使得检索时间变长，综合考虑这些，我们采用第三种方式来融合不同的特征。
 
 我们进行了大量实验来确定多尺度方法最好的配置，实验结果列于表~\ref{table:multiscale_exp_result}中。在表中，「overlap」用来指示每个尺度的各个图像区域是否有重叠部分，「s2」和「s3」表示重叠发生了尺度 2 和 3。「weighing」表示各个尺度特征融合的时候，是否采用了不同的权重或者相同的权重。「version」则表示每个尺度使用不同数目的图像块。
 \begin{table}[!t]
@@ -167,7 +167,7 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 \end{table}
 
 首先，我们研究了尺度的个数对检索精度的影响。当使用的尺度数目分别为 2 和 3 时，我们使用的每个尺度的区域数目分别为 $\{1\times1, 2\times2\}$ 和
-$\{1\times1, 2\times2, 3\times3\}$。对于尺度为 4 的情况，我们使用三种不同版本的区域数目：对于「v1」，「v2」以及「v3」，所使用的图像区域数目分别为 $\{1\times1, 2\times2, 3\times3, 4\times4\}$，$\{1\times1, 2\times2, 3\times3, 5\times5\}$ 和 $\{1\times1, 2\times2, 3\times3, 6\times6\}$。表~\ref{table:multiscale_exp_result}中 (a1)、(b1)、(c6) 三行列出了分别使用 2， 3， 4 个尺度表示数据图像特征得到的检索结果。很显然，尺度数目的增加也使得检索结果性能变好，特别是对于\emph{cropped-query}，检索的结果提高了 3.9\%。
+$\{1\times1, 2\times2, 3\times3\}$。对于尺度为 4 的情况，我们使用三种不同版本的区域数目：对于「v1」，「v2」以及「v3」，所使用的图像区域数目分别为 $\{1\times1, 2\times2, 3\times3, 4\times4\}$，$\{1\times1, 2\times2, 3\times3, 5\times5\}$ 和 $\{1\times1, 2\times2, 3\times3, 6\times6\}$。表~\ref{table:multiscale_exp_result} 中 (a1)、(b1)、(c6) 三行列出了分别使用 2， 3， 4 个尺度表示数据图像特征得到的检索结果。很显然，尺度数目的增加也使得检索结果性能变好，特别是对于\emph{cropped-query}，检索的结果提高了 3.9\%。
 
 接着，我们也研究给不同的尺度的特征加权融合是否会提升检索的效果。我们使用的不同的尺度的特征加权融合方式类似空间金字塔匹配方法~\cite{Lazebnik2006BeyondBO}，也就是说，给来自粗糙尺度上特征更少的权重，给来自精细尺度的特征更大的权重。假设当前总共有 $L$ 个尺度，对应的特征为 $f^1, f^2, \ldots, f^L$，则图像特征 $f$ 计算方式为:
 
@@ -198,8 +198,7 @@ f = \frac{1}{2^{L-1}}f^1 + \sum_{i=2}^{L}\frac{1}{2^{L-i+1}}f^i\, .
 
 \noindent\textbf{（3）主成份分析与白化方法}
 
-我们在 Oxford5k 以及 UKB 数据库上进行了 PCA 与白化对检索影响的实验。对于 Oxford5k 数据库，我们分别从 Oxford5k 数据库本身（我们称为「pca-self」）或者从 Paris6k 数据库（我们称为「self-paris」）学习 PCA 与白化矩阵；对于 UKB 数据集，PCA 与白化矩阵则从 UKB 本身（称为「pca-self」）或者从 Oxford5k 上（称为「pca-oxford」）学习得到。我们发现，对于 Oxford5k 数据库，如果从 Paris6k 上学习 PCA 与白化矩阵，检索结果将会提高。但是 UKB 数据库，由于它和 Oxford5k 数据库和 Paris6k 数据库风格不同，从 Oxford5k 数据库学习到的 PCA 与白化矩阵反而对检索结果有害。图~\ref{fig:pca_self_other_exp}清楚展示了这种不同。同时，对于 Paris6k 数据库，我们也有同样的结果，当使用从 Oxford5k 数据库学习到的 PCA 与白化矩阵时，检索的结果也会有所提升。
-
+我们在 Oxford5k 以及 UKB 数据库上进行了 PCA 与白化对检索影响的实验。对于 Oxford5k 数据库，我们分别从 Oxford5k 数据库本身（我们称为「pca-self」）或者从 Paris6k 数据库（我们称为「self-paris」）学习 PCA 与白化矩阵；对于 UKB 数据集，PCA 与白化矩阵则从 UKB 本身（称为「pca-self」）或者从 Oxford5k 上（称为「pca-oxford」）学习得到。我们发现，对于 Oxford5k 数据库，如果从 Paris6k 上学习 PCA 与白化矩阵，检索结果将会提高。但是 UKB 数据库，由于它和 Oxford5k 数据库和 Paris6k 数据库风格不同，从 Oxford5k 数据库学习到的 PCA 与白化矩阵反而对检索结果有害。图~\ref{fig:pca_self_other_exp} 清楚展示了这种不同。同时，对于 Paris6k 数据库，我们也有同样的结果，当使用从 Oxford5k 数据库学习到的 PCA 与白化矩阵时，检索的结果也会有所提升。
 
 \subsection{与其他方法的对比} \label{subsec:mfc_compare_soa}
 基于前面的实验结果以及我们的对不同影响因素的分析，我们提出了 \textbf{MFC} 方法 --- 一种多尺度全卷积的图像特征表达方法。对于一张图像，我们不对它进行缩放（\emph{free} 的方式），直接输入到神经网络，然后我们从神经网络的最后一层卷积层的输入的特征图的基础上，提取 4 尺度图像特征表达。在多尺度特征表达中，我们使用最大池化处理特征图，并且使用了区域重叠的策略，我们把区域级别的特征加起来形成尺度特征并归一化，然后把各个尺度的特征求和得到图像特征，再一次归一化。之后，我们学习 PCA 与白化矩阵，对图像特征进行降维。对于不同待测数据库，我们用来学习 PCA 和白化矩阵的数据库分别如下：对于 Oxford5k 及 Oxford105k，我们使用的是 Paris6k；对于 Paris6k 和 UKB，我们使用数据库分别是 Oxford5k 以及 UKB。经过 PCA与白化处理的特征，被再一次归一化，得到最终的特征，这个特征用来报告各种方法的性能。
@@ -233,5 +232,5 @@ Labebnik 等人~\cite{Lazebnik2006BeyondBO}提取使用空间金字塔匹配（�
 
 本章采用的是直接提取特征不经过微调的方式来提取图像特征，在这方面有一些喝我们的方法相关的工作。Tolias 等人~\cite{Tolias2015ParticularOR}以及 Babenko 等人~\cite{Babenko2015AggregatingLD}提出使用神经网络的最后一层卷积层的输出作为图像特征，他们分别采用了不同的特征池化方式。Tolias 等人还提出使用一种多尺度的特征表达方式，被称为 R-MAC（regional maximum activation of convolutions），特征图被分为 3 个不同的尺度，每个尺度有一些相互重叠的区域构成，每个尺度的区域个数由原图的长宽比决定。在我们的方法里，我们使用了更简单的策略，每个尺度下区域的个数是固定的，区域的大小根据图像长宽比不同而变化。另外这些工作也没有讨论图像尺寸对检索结果的影响以及该如何学习 PCA 和白化矩阵，才能提升检索的性能。
 
-\section{本章小节}\label{sec:mfc_conclusion}
+\section{本章小结}\label{sec:mfc_conclusion}
 在本章中，我们介绍了所提出多尺度全卷积的图像特征提取方法。前人工作没有详细地探讨各种因素对检索结果的影响，在本工作中，我们对图像尺寸缩放的策略，多尺度提取特征的方式，以及 PCA 和白化矩阵学习这三个重要的因素进行了研究，并进行了大量的实验，分析三个因素对检索的影响，在此基础上提出了我们的多尺度全卷积的图像特征提取方法。我们在四个数据库进行了实验，实验结果也表明我们提出的方法取得了良好的效果。

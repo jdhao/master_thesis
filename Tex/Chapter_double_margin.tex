@@ -235,7 +235,7 @@ l = -w_k \log\frac{\exp(x_k)}{\sum_{i=0}^{126} \exp(x_i)}
 \section{相关工作}\label{sec:double_margin_related_work}
 枪支图像的检索问题之前很少有人研究，Wen 和 Yao ~\cite{Wen2005PistolIR}提出用枪支的轮廓到中心的距离分布来检索相似图片，分布之间的不同用来衡量两个枪支图片的相似度。他们用到的图片背景都比较简单，并且数据库规模很小，大约为 300 张图片。
 
-Babenko 等人~\cite{Babenko2014NeuralCF}提出使用分类任务微调神经网络，并观察到检索的结果有所提高，他们使用的是交叉熵损失，这种损失并不直接针对检索任务，对未知类别泛化能力不强。Arandjelovic 等~\cite{Arandjelovic2016NetVLADCA}将传统的 VLAD 方法用神经网络来实现，使用三元组损失来优化模型，将模型用在了地点检索任务上。Gordo 等人~\cite{Gordo2016DeepIR}提出使用三元组损失，并学习针对检索任务的图像的特征嵌入方法，他们同时结合了物体检测中的 ROIpooling 等方法~\cite{Ren2017FasterRT}来提升模型对物体的定位能力，提高模型的性能。Radenvoic 等~\cite{Radenovic2016CNNIR}则关注于采用 structure from motion 技术，自动从大量图像中产生合适的训练样本对，他们采用了和我们的方法一样的双分支的 Siamese 网络来学习图像特征，发现使用双分支的网络结构能够取得比三分支结构更好的结果。Cao 等人~\cite{Cao2016QuartetnetLF}使用了和我们的双阈值损失函数相似的方法来处理过图像实例检索问题，他们在实验中采用了更加复杂的网络结构。
+Babenko 等人~\cite{Babenko2014NeuralCF}提出使用分类任务微调神经网络，并观察到检索的结果有所提高，他们使用的是交叉熵损失，这种损失并不直接针对检索任务，对未知类别泛化能力不强。Arandjelovic 等~\cite{Arandjelovic2016NetVLADCA} 将传统的 VLAD 方法用神经网络来实现，使用三元组损失来优化模型，将模型用在了地点检索任务上。Gordo 等人~\cite{Gordo2016DeepIR}提出使用三元组损失，并学习针对检索任务的图像的特征嵌入方法，他们同时结合了物体检测中的 ROIpooling 等方法~\cite{Ren2017FasterRT}来提升模型对物体的定位能力，提高模型的性能。Radenvoic 等~\cite{Radenovic2016CNNIR}则关注于采用 structure from motion 技术，自动从大量图像中产生合适的训练样本对，他们采用了和我们的方法一样的双分支的 Siamese 网络来学习图像特征，发现使用双分支的网络结构能够取得比三分支结构更好的结果。Cao 等人~\cite{Cao2016QuartetnetLF}使用了和我们的双阈值损失函数相似的方法来处理过图像实例检索问题，他们在实验中采用了更加复杂的网络结构。
 
-\section{本章小节}\label{sec:double_margin_conclusion}
+\section{本章小结}\label{sec:double_margin_conclusion}
 在本章中，我们详细介绍了提出的双阈值对比损失函数，我们提出该方法的动机主要有两个原因，一是目前单阈值对比损失函数无法保证正负图像对在训练时贡献的损失的平衡，二是我们提出的 Firearm14k 数据与 ImageNet 数据巨大差异导致直接微调模型效果欠佳。我们提出使用双阈值对比损失函数来解决模型训练过程中正负图像对贡献损失不平衡的问题，同时提出使用两步训练的策略来解决数据库之间图像差异大的问题。在实验部分，我们把提出的方法与当前的主流方法进行了比较，并给出可视化的分析，证明我们的方法为什么有效，实验结果表明我们的方法在不同的特征维度下检索效果都超过了当前的主流方法。
