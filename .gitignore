@@ -1,0 +1,6 @@
+Fonts/
+Packages/
+Tmp/
+*.log
+*.synctex.gz
+Thesis.pdf
