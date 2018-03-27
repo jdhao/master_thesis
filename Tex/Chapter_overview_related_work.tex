@@ -18,17 +18,25 @@
 
 
 \section{基于 SIFT 特征描述子的检索方法}
-SIFT 是最常用的图像局部特征描述子，具有良好的旋转以及尺度不变性，传统的图像检索的很多方法都是基于 SIFT 描述子来得到图像的特征，然后再进行图像检索的后续过程。 基于 SIFT 描述子的方法，可以分为 BOF 方法，VLAD 以及 Fisher 向量等方法，其中 BOF 是最经典的方法，本节先介绍 BOF 方法，然后再介绍其他方法。
+SFIT 是由 Lowe~\cite{Lowe2004DistinctiveIF}提出的一种图像局部特征描述子，具有良好的旋转以及尺度不变性，同时对图像的仿射变换以及光照变化和噪声等有一定的鲁棒性，因而被广泛用于描述图像的特征。传统的图像检索的很多方法都是基于 SIFT 描述子来得到图像的特征，然后再进行图像检索的后续过程。 基于 SIFT 描述子的方法，可以分为 BOF 方法，VLAD 以及 Fisher 向量等方法。
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{chapter_review_BOF_proc.pdf}
+\caption{视觉词袋模型（BOF）的工作流程}
+\label{fig:bof_process}
+\end{figure}
 
 \subsection{基于视觉词袋模型（BOF）的检索方法}
-BOF 方法~\cite{OHara2011IntroductionTT,Nowak2006SamplingSF,Yang2007EvaluatingBR}来源于信息检索（information retrieval，IR）领域非常流行的词袋（bag of words，BOW）方法~\cite{manning2008introduction,Salton1975AVS}，该方法将图像看成是一些「视觉词汇」的集合，除了可以应用到图像检索领域，也常用于图像分类等任务。BOF 方法的工作原理大致如下：
+视觉词袋模型（BOF）~\cite{OHara2011IntroductionTT,Nowak2006SamplingSF,Yang2007EvaluatingBR}来源于信息检索（information retrieval，IR）领域非常流行的词袋（bag of words，BOW）方法~\cite{manning2008introduction,Salton1975AVS}，该方法将图像看成是一系列「视觉词汇」的集合，通过统计图像中各个视觉词汇的频率作为图像的正特征，该方法被广泛应用到图像检索领域，也常用于图像分类等任务。图~\ref{fig:bof_process}展示了 BOF 方法的工作流程，具体的工作原理如下：
 
-步骤一：采用一些兴趣点检测算法~\cite{Mikolajczyk2004ScaleA}检测到一些尺度及仿射不变的兴趣点，或者直接将图像分成规则的小块，然后使用 SIFT 局部特征描述子提取算法提取数据库中每张图像的 SIFT 特征。
+步骤一：数据库图像 SIFT 特征提取。在这个阶段，通常使用密集采样~\cite{Vogel2004NaturalSR,FeiFei2005ABH}的方式把图像划分成规则的小块，然后提取局部特征，或者采用一些兴趣点检测算法~\cite{Mikolajczyk2004ScaleA}检测到一些尺度及仿射不变的兴趣点，然后使用 SIFT 局部特征描述子提取算法提取数据库中每张图像的 SIFT 特征。
 
-步骤二：使用 K-means 等聚类算法，对数据库中所有图片得到的 SIFT 特征进行聚类，得到 $K $ 个聚类中心，该聚类中心称为视觉词汇（visual words），其中 $K$ 是一个可以调节的超参数。
+步骤二：视觉词汇的计算。使用 K-means 等聚类算法，对数据库中所有图片得到的 SIFT 特征进行聚类，得到 $K$ 个聚类中心，该聚类中心称为视觉词汇（visual words），其中 $K$ 是一个可以调节的超参数。
 
-步骤三：对于每一张图像中的 SIFT 特征描述子，将其分配给距离最近的视觉词汇，得到对应于每张图像的视觉词汇频率特征，经过归一化等操作，该特征就是该图像的特征，用于后续的分类或者检索等任务。
+步骤三：量化图像局部特征。对于每一张图片，把从该图像提取的 SIFT 特征描述子分配给距离最近的视觉词汇，类似投票的过程。
+
+步骤四：计算图像特征。得到量化的图像特征以后，计算视觉词汇出现的频率，经过归一化等操作，该特征就是该图像的特征，用于后续的分类或者检索等任务。
 
 Sivic 和 Zisserman~\cite{Sivic2003VideoGA}于 2003 年第一次提出使用 BOF 方法来进行图像检索，在该工作中，作者借鉴使用了逆文档频率（inverse document frequency，IDF），停用词（stop words）等文档检索中的常用技术。Sivic 与 Zisserman~\cite{Sivic2003VideoGA}文章中用到的数据库图片样本比较少，如果数据库样本比较大，从所有图片中提取的 SIFT 描述子的数目将非常庞大，传统的 K-means 算法无法有效聚类大量的 SIFT 特征描述子，从而生成视觉词汇，因此 Philbin 等人~\cite{Philbin2007ObjectRW}对比了两种 K-means 的改进方法：近似 K-means （approximate K-means，AKM）以及层次 K-means 方法（hierarchical K-means, HKM）。作者使用了不同的视觉词汇大小来测试两种聚类方法的性能，发现 AKM 方法比 HKM 方法能够得到更好的检索效果。传统的 BOF 方法，得到视觉词汇以后，对于一张图片中的 SIFT 描述子，其权重会完全分配给距离该描述子最近的一个视觉词汇，如果一个 SIFT 描述子同时距离两个视觉词汇都非常相近，以这样的分配方式来计算词频向量显然是有问题的，会损失图像原有的信息。从直觉上来说，如果一个描述子同时距离几个视觉词汇都很近，那么显然该描述子可以按照距离远近给这几个视觉词汇同时赋予一定的权重，Philbin 等人~\cite{Philbin2008LostIQ}即是按照这个思路对原有的 BOF 方法进行了改进，作者称之为软分配（soft asignment）。另外一种对原有 BOF 方法的改进来自 J{\'e}gou 等人~\cite{Jgou2008HammingEA}，该文章提出汉明空间嵌入方法（Hamming embedding, HE）对于查询图像与数据库图像，如果分别来自这两张图像的两个描述子对应于同一个视觉词汇，那么这两个描述子对最后的相似度得分不一定有贡献，我们需要把原有的视觉词汇所在的空间进行进一步细分，得到每个描述子在这个细分的空间中的一个二进制编码，只有当这两个描述子编码的距离小于一个阈值，才对两幅图像之间的相似度有贡献。传统的 BOF 方法得到特征通常维度相当高，不适用于大规模图像检索场景，因此 J{\'e}gou~\cite{Jgou2009PackingB}提出近似方法来代表 BOF 特征，压缩图像特征维度，他们提出的方法的检索速度要比传统的 BOF 快一个数量级。
 
