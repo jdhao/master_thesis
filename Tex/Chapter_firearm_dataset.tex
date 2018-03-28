@@ -85,11 +85,11 @@ OD = \frac{15 - \sum_{i=0}^{4}\sum_{j=i}^{4}C[i,j]}{15}\, ,
 	\label{table:largest_devi_num}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[!t]
 	\centering
-	\includegraphics[width=\linewidth]{chapter_firearm_dataset_cls_img_num.pdf}
-	\caption{枪支图像数据库各个类别图片数量}
-	\label{fig:dataset_cls_img_num}
+	\includegraphics[width=\linewidth]{chapter_firearm_dataset_aspect_ratio.pdf}
+	\caption{Firearm14k 数据与其他数据库图片尺寸比值的分布}
+	\label{fig:dataset_aspect_ratio}
 \end{figure}
 
 \subsection{图像过滤}
@@ -105,28 +105,16 @@ s = \sum_{i=0}^{4}w_{i}s_{i}\, ,
 
 其中 $s_i$ 表示第 $i$ 个标注者对图片的评分。然后我们选择相似性得分在 6 分以上（含 6 分）的图片作为每类的有效图片，这些图片构成了我们的枪支数据库。
 
-\section{数据库的划分与相关统计信息}\label{sec:dataset_stats}
-
-
-最终，我们得到的枪支数据库含有 14755 张图片，这些图片来自 167 类不同类型的枪支，我们将该数据库命名为 Firearm14k。该数据库有两个值得注意的特点：
-\begin{itemize}
-\item  该数据库具有高度不平衡 （imbalanced）的特点（图~\ref{fig:dataset_cls_img_num} 展示了数据库中各类的图片数目，按照图片数目从小到大排序），有的类别的图像包含的图片数目超过 200，还有一些类别图片数量大约只有 20 左右。
-\item 该数据库中的图片是从真实世界中得到，因此图片中的枪支在尺度，拍照的视角，姿态，光照等因素的变化，背景也十分复杂，因此识别的难度很大。
-\end{itemize}
-在图~\ref{fig:dataset_sample_images} 中，我们展示了一些随机选取自枪支数据库的示例图片，从图中可以看出，这些枪支图片中枪支的尺寸，拍摄的视角等变化千差万别，这给枪支图片的识别带来了很大的困难，也是我们试图解决的问题。
-
-\begin{figure}[t]
+\begin{figure}[!t]
 	\centering
-	\includegraphics[width=\linewidth]{chapter_firearm_dataset_images.pdf}
-	\caption{来自 Firearm14k 数据库的一些示例图片}
-	\label{fig:dataset_sample_images}
+	\includegraphics[width=\linewidth]{chapter_firearm_dataset_cls_img_num.pdf}
+	\caption{枪支图像数据库各个类别图片数量}
+	\label{fig:dataset_cls_img_num}
 \end{figure}
-
-我们把数据库划分为训练集，验证集以及测试集，每个集合分别占总的图片量的大约 65\%，10\% 和 25\%，为了模拟真实的检索场景，三个集合的图片类别互不交叉 （具体做法是把 167 类图片随机划分为 3 个互不相交的类的集合，使得三个集合的图片数目占总图片量的比例接近预定的比例）。我们在表~\ref{table:train_val_test_stat} 第 2 行与第 3 行列出了三个集合的图片类别数目，图像数目。对于验证集和测试集，我们从每一类图片中随机选择了两张作为查询图片\footnote{验证集的查询图像中，有一张标注有错误，我们从查询图片中去掉了该图片}，我们把剩余的所有图片作为分别作为验证集和测试集的搜索图像库，具体的图片数目信息见表~\ref{table:train_val_test_stat} 第 4 行和第 5 行。
-
 \begin{table}[!t]
 	\centering
 	\caption{训练集，验证集以及测试集类别数目，图像总数，查询图片以及图片库图片数目}
+	\label{table:train_val_test_stat}
 	\begin{tabular}{@{}llll@{}}
 		\toprule
 		          & 训练集 & 验证集 & 测试集 \\
@@ -134,12 +122,34 @@ s = \sum_{i=0}^{4}w_{i}s_{i}\, ,
 		类别数目 & 107       & 20             & 40       \\
 		图片数目 & 9628      & 1478           & 3649     \\
 		查询图片数目 & --        & 39             & 80       \\
-		图片库 （database）图片数目 & -- & 1438 &  3569 \\
+		图片库图片数目 & -- & 1438 &  3569 \\
 		\bottomrule
 	\end{tabular}
-
-	\label{table:train_val_test_stat}
 \end{table}
+\section{数据库的划分与相关统计信息}\label{sec:dataset_stats}
+最终，我们得到的枪支数据库含有 14755 张图片，这些图片来自 167 类不同类型的枪支，我们将该数据库命名为 Firearm14k。该数据库有几个值得注意的特点：
+
+\begin{enumerate}
+\item  该数据库具有高度不平衡 （imbalanced）的特点（图~\ref{fig:dataset_cls_img_num} 展示了数据库中各类的图片数目，按照图片数目从小到大排序），有的类别的图像包含的图片数目超过 200，还有一些类别图片数量大约只有 20 左右。
+
+\item  由于该数据库包含很多长枪的图片，因此数据库中很多图片的长宽比都很大，在图~\ref{fig:dataset_aspect_ratio} 中，我们分别画出了 Firearm14k，Paris6k，Oxford5k 以及 ImageNet 数据库中图片尺寸的比例关系，对于每一个数据库，我们分别画出了宽和长的比（$W/H$）以及长和宽的比例（$H/W$）。Firearm14k 数据库由于长枪居多，所以宽长比和长宽比的分布呈现明显的两极化特点，两个分布交叉很少（见图~\ref{fig:dataset_aspect_ratio}，左上），另外三个数据库由于长宽比不那么极端，两个分布呈现交错的状态。对于长宽比比较极端的数据库，如果在训练神经网络时把图片缩放为正方形，将会更严重地破坏图像的内容，保持图像长宽比显然是更好的选择。在第 \ref{chapter:double_margin}~章，我们通过实验也发现，保持图像的长宽比来训练网络，比固定图像长宽的方式得到的检索结果至少要高 2\%。
+
+\item 该数据库中的图片是从真实世界中得到，图片中的枪支在尺度，拍照的视角，姿态，光照等因素的变化，背景也十分复杂，因而识别的难度很大。
+\end{enumerate}
+
+在图~\ref{fig:dataset_sample_images} 中，我们展示了一些随机选取自枪支数据库的示例图片，从图中可以看出，这些枪支图片中枪支的尺寸，拍摄的视角等变化千差万别，这给枪支图片的识别带来了很大的困难，也是我们试图解决的问题。
+
+我们把数据库划分为训练集，验证集以及测试集，每个集合分别占总的图片量的大约 65\%，10\% 和 25\%，为了模拟真实的检索场景，三个集合的图片类别互不交叉 （具体做法是把 167 类图片随机划分为 3 个互不相交的类的集合，使得三个集合的图片数目占总图片量的比例接近预定的比例）。我们在表~\ref{table:train_val_test_stat} 第 2 行与第 3 行列出了三个集合的图片类别数目，图像数目。对于验证集和测试集，我们从每一类图片中随机选择了两张作为查询图片\footnote{验证集的查询图像中，有一张标注有错误，我们从查询图片中去掉了该图片}，我们把剩余的所有图片作为分别作为验证集和测试集的搜索图像库，具体的图片数目信息见表~\ref{table:train_val_test_stat} 第 4 行和第 5 行。
+
 
 \section{本章小结}
-本章主要介绍了我们的枪支图片数据库的构建过程。首先，我们介绍了枪支图片的收集与清理，然后我们介绍了图像的标注过程，以及以相关性系数矩阵为基础，确定标注者的标注质量，进而得到图片的相似度分数，从而筛选出每一类真正有效的图片。最后，我们介绍了数据库的划分，并给出了数据库的详细统计信息。
+本章主要介绍了我们的枪支图片数据库的构建过程。首先，我们介绍了枪支图片的收集与清理，然后我们介绍了图像的标注过程，以及以相关性系数矩阵为基础，确定标注者的标注质量，进而得到图片的相似度分数，从而筛选出每一类真正有效的图片。最后，我们介绍了数据库的划分，列出了数据库的几个特点，并给出了数据库的详细统计信息。
+
+\begin{figure}[!t]
+	\centering
+	\includegraphics[width=\linewidth]{chapter_firearm_dataset_images.pdf}
+	\caption{来自 Firearm14k 数据库的一些示例图片}
+	\label{fig:dataset_sample_images}
+\end{figure}
+
+

@@ -36,7 +36,7 @@
 %\includeonly{Tex/Chap_1,...,Tex/Chap_N}% selected files compilation
 \usepackage{ifthen}
 \usepackage{booktabs}
-\usepackage{enumerate}
+% \usepackage{enumerate}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{threeparttable}
@@ -45,9 +45,16 @@
 \usepackage{boxedminipage2e}
 \usepackage{makecell}
 \usepackage{fancyvrb} % for verbatim in footnote
-
+\usepackage{enumitem}
 
 \VerbatimFootnotes
+
+
+\usepackage{enumitem}
+\setlist{
+  listparindent=\parindent,
+  parsep=0pt,
+}
 %%%%************************ Document content ****************************************
 \begin{document}
 

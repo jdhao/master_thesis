@@ -83,18 +83,22 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 
 \noindent\textbf{（2）数据库}
 
-\textbf{Oxford5k} 数据库~\cite{Philbin2007ObjectRW} 包含了 5062 张从 Flickr 上抓取的 Oxford 建筑图片。该数据库总共包含 55 个查询图像，每个查询图像包含有具体查询区域的坐标，在实验中对于每一幅查询图像，我们使用了两种查询，分别是 \emph{full-query}(使用整个查询图像) 和 \emph{cropped-query}(使用坐标指定区域内的图像)。在该数据库上的评价指标为 mAP。
+在本章的实验中，我们总共使用了四个数据库，现对这四个数据库以及对应的评价指标做一简要介绍：
+\begin{enumerate}
+\item \textbf{Oxford5k} 数据库~\cite{Philbin2007ObjectRW} 包含了 5062 张从 Flickr 上抓取的 Oxford 建筑图片。该数据库总共包含 55 个查询图像，每个查询图像包含有具体查询区域的坐标，在实验中对于每一幅查询图像，我们使用了两种查询，分别是 \emph{full-query}(使用整个查询图像) 和 \emph{cropped-query}(使用坐标指定区域内的图像)。在该数据库上的评价指标为 mAP。
 
-\textbf{Paris6k} 数据库~\cite{Philbin2008LostIQ} 包含了 6412 张来自巴黎的建筑图片\footnote{按照惯例，该数据有 20 张被损坏的图片被去掉，因此实际图片数量是 6392。}。与 Oxford5k 数据库类似，该数据库也包含了 55个 查询图像，同时附带每个图像对应的感兴趣区域的坐标。在这个数据库上的评价指标是 mAP。
 
-\textbf{Oxford105k} 数据库包含了的是 Oxford5k 数据库的图片以及额外 100,000 张来自 Flickr 的图片\footnote{有一张损坏图片 \verb+oxc1_100k\portrait\portrait_000801.jpg+ 被移除}~\cite{Philbin2007ObjectRW}。这 100000 张
+\item \textbf{Paris6k} 数据库~\cite{Philbin2008LostIQ} 包含了 6412 张来自巴黎的建筑图片\footnote{按照惯例，该数据有 20 张被损坏的图片被去掉，因此实际图片数量是 6392。}。与 Oxford5k 数据库类似，该数据库也包含了 55个 查询图像，同时附带每个图像对应的感兴趣区域的坐标。在这个数据库上的评价指标是 mAP。
+
+\item \textbf{Oxford105k} 数据库包含了的是 Oxford5k 数据库的图片以及额外 100,000 张来自 Flickr 的图片\footnote{有一张损坏图片 \verb+oxc1_100k\portrait\portrait_000801.jpg+ 被移除}~\cite{Philbin2007ObjectRW}。这 100000 张
 图片与 Oxford5k 没有相同的图片，被用来作为干扰图片，主要是为了验证数据库规模扩大时的算法的性能。在这个数据库上的评价指标与 Oxford5k 完全一致。
 
-\textbf{UKB} 数据库~\cite{Nistr2006ScalableRW} 总包含了 2550 个物体的 10200 张照片，每个物体 4 张照片。实验时，每张图片被用作查询图片去查询其他图片（包含该图片本身），在这个数据上的评价指标比较特殊，用返回的前四张图片与查询图片相似的平均数目来衡量，是区间 $[0,4]$ 上的一个数，也就是 $4\times recall@4$。
+\item  \textbf{UKB} 数据库~\cite{Nistr2006ScalableRW} 总包含了 2550 个物体的 10200 张照片，每个物体 4 张照片。实验时，每张图片被用作查询图片去查询其他图片（包含该图片本身），在这个数据上的评价指标比较特殊，用返回的前四张图片与查询图片相似的平均数目来衡量，是区间 $[0,4]$ 上的一个数，也就是 $4\times recall@4$。
+
+\end{enumerate}
 
 \subsection{实验结果与分析}
 在本部分，我们对不同的因素对检索结果影响进行了详细的实验，并给出相应的分析。
-
 
 \noindent\textbf{（1）图像尺寸变化对检索的影响}
 
