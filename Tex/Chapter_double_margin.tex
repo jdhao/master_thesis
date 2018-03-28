@@ -208,6 +208,7 @@ l = -w_k \log\frac{\exp(x_k)}{\sum_{i=0}^{126} \exp(x_i)}
     \midrule
     Neural codes~\cite{Babenko2014NeuralCF} & 15.9 & 15.8 & 15.7 & 14.6 & 13.7 & 10.5\\
     SPoC~\cite{Babenko2015AggregatingLD} & 23.3 & 23.4 & 23.1 & 22.4 & 20.6 & 18.4\\
+    MFC~\cite{Hao2017MFCAM} & 30.0 & 29.8 & 29.5 & 28.0 & 24.5 & 20.9 \\
     MAC~\cite{Tolias2015ParticularOR} & 36.1 & 36.4 & 36.5 & 35.4  & 32.3 & 27.8\\
     \midrule
     Siamese-MAC~\cite{Radenovic2016CNNIR} & 35.6 & 36.2 & 37.2 & 37.3 & 35.2 & 31.4\\
@@ -230,7 +231,7 @@ l = -w_k \log\frac{\exp(x_k)}{\sum_{i=0}^{126} \exp(x_i)}
 
 首先，我们报告不同的方法在 mAP 指标上的结果，参见表~\ref{table:firearm_retrieval_compare_with_soa}。这里的结果表明，off-the-shelf 模型（表~\ref{table:firearm_retrieval_compare_with_soa}，\textbf{上部}）的 mAP 分数都相对较低，这是由于 Firearm14k 数据库和 ImageNet 数据库的巨大差异，这些预训练的模型无法生成具有区分性的特征，因而检索效果并不理想。使用单阈值方法微调的模型~\cite{Radenovic2016CNNIR}表现也不理想，使用三元组损失的 TripletNet~\cite{Gordo2016DeepIR}的表现相对单阈值方法提高了很多。最后，我们的提出的方法在不同的特征维度下都超过了其他方法。值得注意的是，我们的方法在特征维度被压缩到极低的情况下仍然表现良好，例如当特征维度为 16 时，检索的 mAP 仍然达到了 61.59\%。
 
-我们也计算了不同方法在 Firearm14k 测试集上的 rank-k 准确率，在这个实验中，我们使用的 512 维的特征，得到的实验结果如图~\ref{fig:rank_k_accuracy_compare}所示。从图中可以看出，当 $k$ 比较大时（$k=16$ 或 $k=32$ 时），各种方法的 rank-k 准确率都较高，这说明 rank-k 指标是比较容易的指标；当 $k$ 比较小时，SPoC~\cite{Babenko2015AggregatingLD}，NeuralCode~\cite{Babenko2014NeuralCF}和 Siamese-MAC~\cite{Radenovic2016CNNIR}等方法，表现较差，TripletNet 方法~\cite{Gordo2016DeepIR}和我们的方法此时表现较好，特别是我们的方法，在 $k=1$ 或 $k=2$ 时，表现要优于 TripletNet 方法。
+我们也计算了不同方法在 Firearm14k 测试集上的 rank-k 准确率，在这个实验中，我们使用的是 512 维特征，得到的实验结果如图~\ref{fig:rank_k_accuracy_compare}所示。从图中可以看出，当 $k$ 比较大时（$k=16$ 或 $k=32$ 时），各种方法的 rank-k 准确率都较高，这说明 rank-k 指标是比较容易的指标；当 $k$ 比较小时，SPoC~\cite{Babenko2015AggregatingLD}，NeuralCode~\cite{Babenko2014NeuralCF}和 Siamese-MAC~\cite{Radenovic2016CNNIR}等方法，表现较差，TripletNet 方法~\cite{Gordo2016DeepIR}和我们的方法此时表现较好，特别是我们的方法，在 $k=1$ 或 $k=2$ 时，表现要优于 TripletNet 方法。
 
 \section{相关工作}\label{sec:double_margin_related_work}
 枪支图像的检索问题之前很少有人研究，Wen 和 Yao ~\cite{Wen2005PistolIR}提出用枪支的轮廓到中心的距离分布来检索相似图片，分布之间的不同用来衡量两个枪支图片的相似度。他们用到的图片背景都比较简单，并且数据库规模很小，大约为 300 张图片。
