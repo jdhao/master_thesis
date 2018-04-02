@@ -26,7 +26,7 @@
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.95\linewidth]{chapter_double_margin_train_test_arch.pdf}
-  \caption{我们提出的双阈值方法的网络结构，上面为训练网络，下面为测试网络}
+  \caption[基于双阈值对比损失方法的网络结构]{基于双阈值对比损失方法的网络结构，上面为训练网络，下面为测试网络}
   \label{fig:train_test_arch}
 \end{figure}
 
@@ -127,16 +127,16 @@ l = -w_k \log\frac{\exp(x_k)}{\sum_{i=0}^{126} \exp(x_i)}
 
 我们也从直观上研究了为什么基于双阈值损失函数的方法更加有效。我们分别画出了基于双阈值函数的方法以及基于单阈值函数的方法，在一个训练过程中不同批数据中，相似样本对以及不相似样本对对整个损失的贡献，所得到的结果如图~\ref{fig:img_pair_loss_contribution}所示。图~\ref{fig:img_pair_loss_contribution}上部分展示的是使用单阈值对比损失函数的结果，下部分展示的使用双阈值对比损失函数的结果。可以看出，使用单阈值损失函数时，刚开始训练时的一些批次数据，正样本对总的损失的贡献明显大于负样本对，这样的话，网络的训练可能会被引入错误的方向，导致后续模型优化出现方向错误，因而检索效果很差；使用双阈值损失函数，从训练一开始，正负样本贡献的损失与负样本贡献的损失相对平衡，因而网络优化方向更好，检索的效果也更好。
 
-
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.95\linewidth]{chapter_double_margin_pos_neg_loss_contrib.pdf}
-  \caption{使用不同损失函数（\textbf{上图}：单阈值对比损失函数，\textbf{下图}：双阈值对比损失函数），一个训练过程中不同批次数据，相似样本对与不相似样本对对损失的贡献}
+  \caption[使用不同损失函数时，正负样本对对损失的贡献率]{使用不同损失函数（\textbf{上图}：单阈值对比损失函数，\textbf{下图}：双阈值对比损失函数），一个训练过程中不同批次数据，相似样本对与不相似样本对对损失的贡献}
   \label{fig:img_pair_loss_contribution}
 \end{figure}
+
 \begin{table}[t]
 \centering
- \caption{两步训练方法的有效性}
+ \caption{两步训练策略的结果}
  \label{table:two_step_training}
 	\begin{tabular}{@{}lllllll@{}}
 		\toprule
