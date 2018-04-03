@@ -250,8 +250,9 @@
 
         \vspace*{\stretch{2}}
         {\UCAS@label@englishstatement}
-        {By}
-        {\UCAS@value@englishauthor}
+
+        {By}\\
+        {\UCAS@value@englishauthor}\\
         {\UCAS@value@englishadvisor}
 
         \vspace*{\stretch{3}}
