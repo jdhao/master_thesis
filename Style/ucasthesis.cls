@@ -283,7 +283,7 @@
         \begin{center}
             {\zihao{4}\bfseries\sffamily \UCAS@value@declare@create}
         \end{center}
-        {\UCAS@value@declare@creativity}
+        {\quad\quad\UCAS@value@declare@creativity}
 
         \vspace*{3ex}
         \begin{flushright}
@@ -295,7 +295,7 @@
         \begin{center}
             {\zihao{4}\bfseries\sffamily \UCAS@value@declare@right}
         \end{center}
-        {\UCAS@value@declare@rights}
+        {\quad\quad\UCAS@value@declare@rights}
         {\UCAS@value@declare@rule}
 
         \vspace*{3ex}
