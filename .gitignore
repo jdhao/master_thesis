@@ -5,3 +5,10 @@ Tmp/
 *.synctex.gz
 *.pdf
 !Thesis.pdf
+*.aux
+*.bbl
+*.lot
+*.blg
+*.lof
+*.toc
+*.out
