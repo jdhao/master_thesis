@@ -1,3 +1,6 @@
+# About this repo
+This repo is created to store my master thesis.
+
 # 中国科学院自动化研究所学位论文模板（ LaTeX & Word ）
 
 ## 模板下载
