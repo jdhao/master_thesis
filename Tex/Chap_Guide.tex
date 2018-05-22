@@ -76,7 +76,7 @@ Navier-Stokes equations:
     \centering
     \footnotesize% fontsize
     \setlength{\tabcolsep}{4pt}% column separation
-    \renewcommand{\arraystretch}{1.2}%row space 
+    \renewcommand{\arraystretch}{1.2}%row space
     \begin{tabular}{lcccccccc}
         \hline\hline
         Row number & \multicolumn{8}{c}{This is a multicolumn} \\
@@ -202,7 +202,7 @@ Navier-Stokes equations:
 
 2）你会发现索引信息中第一行为 \verb|@article{lamport1986document,|。其中 \verb|lamport1986document| 即为此文献的label (\textbf{中文文献也必须使用英文label}，一般遵照：姓氏拼音+年份+标题第一字拼音的格式)，想要在论文中索引此文献，有两种索引模式：
 
-textual：\verb|\citet{lamport1986document}|。正如此处所示 \citet{lamport1986document}; 
+textual：\verb|\citet{lamport1986document}|。正如此处所示 \citet{lamport1986document};
 
 parenthetical：\verb|\citep{lamport1986document}|。正如此处所示 \citep{lamport1986document}。
 
@@ -267,7 +267,7 @@ parenthetical：\verb|\citepns{lamport1986document,chen2005zhulu}|。正如此�
       \end{enumerate}
   \item 若编译过程中出现无法找到某些package的错误，如无法找到xcolor.sty，mathtools.sty，ctexbook.sty，newtext.sty等，\TeX{}编译程序一般可以自动下载和安装相应的文件，否则，请进入\LaTeX{}软件的Package Manager (Admin)确认启用Repository--Synchronize状态。下次编译过程中\TeX{}编译程序一般将自动下载安装\LaTeX{}宏包库。
   \item 模版在设计之初就尽可能地考虑了适应性。致谢，简历及攻读学位期间发表的学术论文与科研成果等几乎所有条目都是通过最为通用的
-       
+
        \verb+\chapter{item name}+  and \verb+\section*{item name}+
 
        来显式实现的 (请仔细观察下Frontpage.tex, Prematter.tex, Backmatter.tex)，从而你可以随意添加，放置，和修改他们，如同一般章节。对于图表目录名称则可在ucasthesis.cfg中进行修改。
@@ -302,7 +302,7 @@ parenthetical：\verb|\citepns{lamport1986document,chen2005zhulu}|。正如此�
           \item AdobeSongStd-Light.otf（adobe 宋体）
       \end{enumerate}
       下载字体文件后，双击安装相应字体。
-      
+
       在Thesis.tex中设置启用adobe的字体:
 
       \verb+\documentclass[doublesided,fontset=adobe]{Style/ucasthesis}%+
@@ -310,7 +310,7 @@ parenthetical：\verb|\citepns{lamport1986document,chen2005zhulu}|。正如此�
       如果\LaTeX{}软件版本比较老旧，如Linux用户，ctex宏包没有更新，设置启用adobe的字体则为:
 
       \verb+\documentclass[doublesided,adobefonts]{Style/ucasthesis}%+
-     
+
      最后选择xelatex编译引擎编译。
 
      因为模版的设定考虑兼顾不同操作系统(Windows, Linux, Mac OS)并兼顾pdflatex和xelatex，为了模版的健壮性，上述方案并未作为原始设定。
@@ -323,7 +323,7 @@ parenthetical：\verb|\citepns{lamport1986document,chen2005zhulu}|。正如此�
     %\renewcommand{\footrulewidth}{0pt}% footer rule
 }
 \end{verbatim}
-     
+
      关于页眉页脚各个命令的作用和意义请参见fancyhdr的用户文档 \url{https://www.ctan.org/pkg/fancyhdr?lang=en}。如果需要在页眉页脚中添加章节字样，请使用
       \begin{enumerate}
           \item \verb+\CTEXthechapter+  显示: 第X章
@@ -342,7 +342,7 @@ parenthetical：\verb|\citepns{lamport1986document,chen2005zhulu}|。正如此�
 \end{itemize}
       无论哪种方案都需要注意对页眉页脚的影响并做出合适的调整。个人的推荐是采用默认设置，尽量避免将精力花在这些无关紧要的细节上。\LaTeX{}的特点是标准化，而其导致的问题则是任何脱离标准的修改都将花费相当的精力。对于电子档的论文，在thesis.tex的documentclass中，若不想使用doublesided，则可使用singlesided来减少空白页。而对于打印版，启用printcopy选项以替换doublesided/singlesided选项，这样可使奇偶页的排版在打印装订后更美观。
   \item 若pdflatex编译出现pdfTeX error (font expansion): auto expansion is only possible with scalable fonts。是因为MikTex安装后字体配置异常，请进入软件的package manager更新你的\LaTeX{}宏包库，并请进入
-      
+
       \verb+C:\Program Files\MiKTeX 2.9\miktex\bin\x64+
 
        找到并运行updmap.exe。
