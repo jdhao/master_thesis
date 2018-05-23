@@ -8,66 +8,62 @@
 %- under the terms of the GNU General Public License as published by
 %- the Free Software Foundation, either version 3 of the License, or
 %- (at your option) any later version.
-
 %---------------------------------------------------------------------------%
 %->> Identification
 %---------------------------------------------------------------------------%
-\NeedsTeXFormat{LaTeX2e}[1995/12/01]%
-\ProvidesClass{Style/ucasthesis}[2014/10/01 v0.1 LaTeX document class]%
-
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesClass{ucasthesis}[2014/10/01 v1.0 LaTeX document class]%
 %---------------------------------------------------------------------------%
 %->> Declare options
 %---------------------------------------------------------------------------%
-
+%-
 %-> Layout
-\newif\ifUCAS@singlesided \UCAS@singlesidedfalse
+%-
+\newif\ifucas@singlesided \ucas@singlesidedfalse
 \DeclareOption{singlesided}{% enable single-sided printing
-    \UCAS@singlesidedtrue%
+    \ucas@singlesidedtrue%
 }
-\newif\ifUCAS@doublesided \UCAS@doublesidedfalse
+\newif\ifucas@doublesided \ucas@doublesidedfalse
 \DeclareOption{doublesided}{% enable double-sided printing
-    \UCAS@doublesidedtrue%
+    \ucas@doublesidedtrue%
 }
-\newif\ifUCAS@printcopy \UCAS@printcopyfalse
+\newif\ifucas@printcopy \ucas@printcopyfalse
 \DeclareOption{printcopy}{% enable print copy layout
-    \UCAS@doublesidedtrue% auto enable double-sided style
-    \UCAS@printcopytrue%
+    \ucas@doublesidedtrue% auto enable double-sided style
+    \ucas@printcopytrue%
 }
-
-%-> Confidential info
-\newif\ifUCAS@mjinfo \UCAS@mjinfofalse
-\DeclareOption{showmj}{%
-    \UCAS@mjinfotrue%
-}
-
+%-
 %-> Draft version info
-\newif\ifUCAS@versioninfo \UCAS@versioninfofalse
+%-
+\newif\ifucas@versioninfo \ucas@versioninfofalse
 \DeclareOption{draftversion}{%
-    \UCAS@versioninfotrue%
+    \ucas@versioninfotrue%
 }
-
+%-
 %-> Handle non-implemented options
+%-
 \DeclareOption*{%
     \PassOptionsToClass{\CurrentOption}{ctexbook}%
 }
-
+%-
 %-> Terminates all options processing
+%-
 \ProcessOptions\relax%
-
 %---------------------------------------------------------------------------%
 %->> Load class information
 %---------------------------------------------------------------------------%
-\ifUCAS@doublesided% if double-sided printing enabled
-    \LoadClass[UTF8,a4paper,twoside,12pt]{ctexbook}
+\ifucas@doublesided% if double-sided printing enabled
+    \LoadClass[UTF8,a4paper,twoside,zihao=-4]{ctexbook}
 \else% if double-sided printing isn't enabled
-    \LoadClass[UTF8,a4paper,oneside,12pt]{ctexbook}
+    \LoadClass[UTF8,a4paper,oneside,zihao=-4]{ctexbook}
 \fi
-
 %---------------------------------------------------------------------------%
 %->> Required packages
 %---------------------------------------------------------------------------%
 \RequirePackage{ifxetex}% LaTeX engine detection
-
+\RequirePackage{etoolbox}% a toolbox of programming facilities
+\newcommand{\ucasifstreq}{\expandafter\ifstrequal\expandafter}% expansion control
+\newcommand{\ucasifstrbk}{\expandafter\ifblank\expandafter}% expansion control
 %---------------------------------------------------------------------------%
 %->> Load class configuration
 %---------------------------------------------------------------------------%
@@ -76,41 +72,42 @@
     \InputIfFileExists{Style/ucasthesis.cfg}{}{}
     \makeatother
 }
-
 %---------------------------------------------------------------------------%
 %->> Page layout
 %---------------------------------------------------------------------------%
 %- part one -- horizontal widths
 %- left side width + textwidth + right side width = paperwidth
-%- left side width of [odd, even] page = [odd, even]sidemargin + 1.0in (fixed) + hoffset
 %- binding side width + textwidth + nonbinding side width = paperwidth
 %- binding side width of [odd, even] page = [left, right] side width
+%- left side width of [odd, even] page = 1.0in (fixed) + hoffset + [odd, even]sidemargin
 %- assuming A4 paper (210mm x 297mm)
-\setlength{\textwidth}{150mm}% set required text width first
-\ifUCAS@printcopy% if print copy layout enabled
-    \setlength{\oddsidemargin}{10mm}% binding side width
+\setlength{\textwidth}{146.6mm}% set required text width first
+\setlength{\hoffset}{0mm}% set horizontal offset
+\ifucas@printcopy% if print copy layout enabled
+    \setlength{\oddsidemargin}{12.6mm}% binding side margin
     \setlength{\evensidemargin}{0mm}% ensure uniform binding side width for printing
 \else
-    \setlength{\oddsidemargin}{5mm}% left side width
-    \setlength{\evensidemargin}{5mm}% ensure uniform left side width for EThesis
+    \setlength{\oddsidemargin}{6.3mm}% left side margin
+    \setlength{\evensidemargin}{6.3mm}% ensure uniform left side width for EThesis
 \fi
-%- set margin for notes to zero
-\setlength{\marginparwidth}{0pt}% width of margin notes
-\setlength{\marginparsep}{0pt}% width of space between body text and margin notes
+\setlength{\marginparwidth}{35pt}% width of margin notes
+\setlength{\marginparsep}{10pt}% width of space between body text and margin notes
 %- part two -- vertical heights
 %- top height + textheight + bottom height = paperheight
 %- top height = 1.0in (fixed) + voffset + topmargin + headheight + headsep
-\setlength{\textheight}{240mm}% set required text height first
-\setlength{\voffset}{-20mm}% set a minimum header height
-\setlength{\headheight}{15pt}% set a minimum header height
+\setlength{\textheight}{246.2mm}% set required text height first
+\setlength{\voffset}{-17.4mm}% set vertical offset
+\setlength{\topmargin}{20pt}% vertical margin above header
+\setlength{\headheight}{12pt}% header height
+\setlength{\headsep}{17.5pt}% vertical margin between header and body text
+\setlength{\footskip}{29.5pt}% vertical margin between footer and body text
 %- specifies the amount of space between paragraphs.
 \setlength{\parskip}{0.5ex plus 0.25ex minus 0.25ex}
 %- line spacing
-\linespread{1.25}% line space setting
+\linespread{1.5}% line space setting
 \raggedbottom% prevent adding vertical white space in strange places
 %- default pagestyle is page number at bottom without headers and footers
 \pagestyle{plain}
-
 %---------------------------------------------------------------------------%
 %->> Style control commands
 %---------------------------------------------------------------------------%
@@ -130,83 +127,103 @@
 \newcommand{\ulenhance}[2][1pt]{% enhanced underline
     \def\ULthickness{#1}% set thickness
     \uline{#2}}
-\newcommand{\ulhshift}{-3em}% horizontal shift on underline
+\newcommand{\ulhshift}{-4em}% horizontal shift on underline
 \newcommand{\ulextend}[2][350pt]{% extend underline length
     \hbox to #1{\hfill\hspace*{\ulhshift}#2\hfill}}
-\def\UCAS@underline[#1]#2{%
-    \CJKunderline{\hbox to #1{\hfill#2\hfill}}}
-\def\UCASunderline{\@ifnextchar[\UCAS@underline\CJKunderline}
-
 %---------------------------------------------------------------------------%
 %->> Titlepage
 %---------------------------------------------------------------------------%
-
+%-
 %-> Chinese item commands
-\newcommand{\confidential}[1]{\def\UCAS@value@confidential{#1}}
-\newcommand{\schoollogo}[2]{\def\UCAS@value@schoollogo{\includegraphics[#1]{#2}}}
-\renewcommand{\title}[2][\UCAS@value@title]{%
-    \def\UCAS@value@title{#2}
-    %\def\UCAS@value@titlemark{\MakeUppercase{#1}}}
-    \def\UCAS@value@titlemark{#1}}
-\renewcommand{\@title}{\UCAS@value@titlemark}
-\renewcommand{\author}[1]{\def\UCAS@value@author{#1}}
-\newcommand{\advisor}[1]{\def\UCAS@value@advisor{#1}}
-\newcommand{\advisorsec}[1]{\def\UCAS@value@advisorsec{#1}}
-\newcommand{\degree}[1]{\def\UCAS@value@degree{#1}}
-\newcommand{\degreetype}[1]{\def\UCAS@value@degreetype{#1}}
-\newcommand{\major}[1]{\def\UCAS@value@major{#1}}
-\newcommand{\institute}[1]{\def\UCAS@value@institute{#1}}
-\newcommand{\chinesedate}[1]{\def\UCAS@value@chinesedate{#1}}
-\newcommand{\ifstringequal}[4]{%
-	\ifnum\pdfstrcmp{#1}{#2}=0
-		#3%
-	\else
-		#4%
-	\fi
-}
-
+%-
+\def\ucas@value@confidential{}
+\newcommand{\confidential}[1]{\def\ucas@value@confidential{#1}}
+\def\ucas@value@schoollogo{}
+\newcommand{\schoollogo}[2]{\def\ucas@value@schoollogo{\includegraphics[#1]{#2}}}
+\def\ucas@value@title{}
+\def\ucas@value@titlemark{}
+\renewcommand{\title}[2][\ucas@value@title]{%
+    \def\ucas@value@title{#2}
+    %\def\ucas@value@titlemark{\MakeUppercase{#1}}}
+    \def\ucas@value@titlemark{#1}}
+\renewcommand{\@title}{\ucas@value@titlemark}
+\def\ucas@value@author{}
+\renewcommand{\author}[1]{\def\ucas@value@author{#1}}
+\def\ucas@value@advisor{}
+\newcommand{\advisor}[1]{\def\ucas@value@advisor{#1}}
+\def\ucas@value@advisorsec{}
+\newcommand{\advisorsec}[1]{\def\ucas@value@advisorsec{#1}}
+\def\ucas@value@degree{}
+\newcommand{\degree}[1]{\def\ucas@value@degree{#1}}
+\def\ucas@value@degreetype{}
+\newcommand{\degreetype}[1]{\def\ucas@value@degreetype{#1}}
+\def\ucas@value@major{}
+\newcommand{\major}[1]{\def\ucas@value@major{#1}}
+\def\ucas@value@institute{}
+\newcommand{\institute}[1]{\def\ucas@value@institute{#1}}
+\def\ucas@value@chinesedate{}
+\newcommand{\chinesedate}[1]{\def\ucas@value@chinesedate{#1}}
+%-
 %-> Redefine Chinese style
+%-
 \renewcommand{\maketitle}{%
+    \ucasifstreq{\ucas@value@englishdegree}{Bachelor}{%
+        \def\ucas@label@thesis{\ucas@label@bacthesis}%
+        \def\ucas@label@major{\ucas@label@ungradmajor}%
+        \def\ucas@label@institute{\ucas@label@ungradinstitute}%
+    }{%
+    \ucasifstreq{\ucas@value@englishdegree}{Master}{%
+        \def\ucas@label@thesis{\ucas@label@masthesis}%
+        \def\ucas@label@major{\ucas@label@gradmajor}%
+        \def\ucas@label@institute{\ucas@label@gradinstitute}%
+    }{%
+        \def\ucas@label@thesis{\ucas@label@docthesis}%
+        \def\ucas@label@major{\ucas@label@gradmajor}%
+        \def\ucas@label@institute{\ucas@label@gradinstitute}%
+    }}%
     \cleardoublepage
     \thispagestyle{empty}
     \begin{center}
+        \linespread{1.5}
         \zihao{4}\bfseries
-        \ifUCAS@mjinfo
-            \hfill{} {\UCAS@label@confidential \ulenhance{\ulextend[50pt]{\hspace*{-\ulhshift}\zihao{5}\UCAS@value@confidential}}}
-        \else
-            \hfill{} {}
-        \fi
+
+        \hfill{} \ucasifstrbk{\ucas@value@confidential}{}{\ucas@label@confidential \ulenhance{\ulextend[50pt]{\hspace*{-\ulhshift}\zihao{5}\ucas@value@confidential}}}
 
         \vspace*{\stretch{4}}
-        {\UCAS@value@schoollogo}
+
+        {\ucas@value@schoollogo}
 
         \vspace*{\stretch{2}}
-        {\zihao{1}\bfseries\sffamily \UCAS@value@degree\UCAS@label@thesis}
+
+        {\zihao{1}\bfseries\sffamily {\ucas@label@thesis}}
 
         \vspace*{\stretch{3}}
-        {\zihao{3}\bfseries\sffamily \UCASunderline{\ \UCAS@value@title\ }}
+
+        {\zihao{-3}\bfseries\sffamily \ulenhance[1.5pt]{\ \ucas@value@title\ }}
 
         \vspace*{\stretch{3}}
+
         \def\tabcolsep{1pt}
-        \def\arraystretch{1.4}
+        \def\arraystretch{1.3}
         \begin{tabular}{lc}
-            \UCAS@label@author & \UCASunderline[295pt]{\CJKfamily{zs} \UCAS@value@author}\\
-            \UCAS@label@advisor & \UCASunderline[295pt]{\CJKfamily{zs} \UCAS@value@advisor}\\
-            \ifstringequal{\UCAS@value@advisorsec}{}{}{& \UCASunderline[295pt]{\CJKfamily{zs} \UCAS@value@advisorsec}\\}
-            \UCAS@label@degree & \UCASunderline[295pt]{\CJKfamily{zs} \UCAS@value@degreetype\UCAS@value@degree}\\
-            \UCAS@label@major & \UCASunderline[295pt]{\CJKfamily{zs} \UCAS@value@major}\\
-            \UCAS@label@institute & \UCASunderline[295pt]{\CJKfamily{zs} \UCAS@value@institute}
+            \ucas@label@author & \ulenhance[1.2pt]{\ulextend{\ucas@value@author}}\\
+            \ucas@label@advisor & \ulenhance[1.2pt]{\ulextend{\ucas@value@advisor}}\\
+            % & \ulenhance[1.2pt]{\ulextend{\ucas@value@advisorsec}}\\
+            \ucas@label@degree & \ulenhance[1.2pt]{\ulextend{\ucas@value@degreetype\ucas@value@degree}}\\
+            \ucas@label@major & \ulenhance[1.2pt]{\ulextend{\ucas@value@major}}\\
+            \ucas@label@institute & \ulenhance[1.2pt]{\ulextend{\ucas@value@institute}}\\
         \end{tabular}
 
-        \vspace*{\stretch{5}}
-        {\UCAS@value@chinesedate}
+        \vspace*{\stretch{4.5}}
 
-        \vspace*{\stretch{3}}
+        {\ucas@value@chinesedate}
+
+        \vspace*{\stretch{3.5}}
     \end{center}
     \clearpage
     \if@twoside
         \thispagestyle{empty}
-        \ifUCAS@versioninfo
+        \ifucas@versioninfo
             \vspace*{\stretch{1}}
             \begin{footnotesize}
                 \noindent
@@ -215,7 +232,7 @@
         \fi
         \cleardoublepage[empty]
     \else
-        \ifUCAS@versioninfo
+        \ifucas@versioninfo
             \thispagestyle{empty}
             \vspace*{\stretch{1}}
             \begin{footnotesize}
@@ -226,18 +243,30 @@
         \fi
     \fi
 }
-
+%-
 %-> English item commands
-\newcommand{\englishtitle}[1]{\def\UCAS@value@englishtitle{#1}}
-\newcommand{\englishauthor}[1]{\def\UCAS@value@englishauthor{#1}}
-\newcommand{\englishadvisor}[1]{\def\UCAS@value@englishadvisor{#1}}
-\newcommand{\englishdegree}[1]{\def\UCAS@value@englishdegree{#1}}
-\newcommand{\englishthesistype}[1]{\def\UCAS@value@englishthesistype{#1}}
-\newcommand{\englishmajor}[1]{\def\UCAS@value@englishmajor{#1}}
-\newcommand{\englishinstitute}[1]{\def\UCAS@value@englishinstitute{#1}}
-\newcommand{\englishdate}[1]{\def\UCAS@value@englishdate{#1}}
-
+%-
+\def\ucas@value@englishtitle{}
+\newcommand{\englishtitle}[1]{\def\ucas@value@englishtitle{#1}}
+\def\ucas@value@englishauthor{}
+\newcommand{\englishauthor}[1]{\def\ucas@value@englishauthor{#1}}
+\def\ucas@value@englishadvisor{}
+\newcommand{\englishadvisor}[1]{\def\ucas@value@englishadvisor{#1}}
+\def\ucas@value@englishdegree{}
+\newcommand{\englishdegree}[1]{\edef\ucas@value@englishdegree{\zap@space#1 \@empty}}% expand and remove space
+\def\ucas@value@englishdegreetype{}
+\newcommand{\englishdegreetype}[1]{\def\ucas@value@englishdegreetype{#1}}
+\def\ucas@value@englishthesistype{}
+\newcommand{\englishthesistype}[1]{\def\ucas@value@englishthesistype{#1}}
+\def\ucas@value@englishmajor{}
+\newcommand{\englishmajor}[1]{\def\ucas@value@englishmajor{#1}}
+\def\ucas@value@englishinstitute{}
+\newcommand{\englishinstitute}[1]{\def\ucas@value@englishinstitute{#1}}
+\def\ucas@value@englishdate{}
+\newcommand{\englishdate}[1]{\def\ucas@value@englishdate{#1}}
+%-
 %-> Redefine English style
+%-
 \newcommand{\makeenglishtitle}{%
     \cleardoublepage
     \thispagestyle{empty}
@@ -246,20 +275,26 @@
         \zihao{4}\bfseries
 
         \vspace*{50pt}
-        {\zihao{-3}\bfseries \UCASunderline{\ \UCAS@value@englishtitle\ }}
+
+        {\zihao{-3}\bfseries \ulenhance[1.5pt]{\ \ucas@value@englishtitle\ }}
 
         \vspace*{\stretch{2}}
-        {\UCAS@label@englishstatement}
 
-        {By}\\
-        {\UCAS@value@englishauthor}\\
-        {\UCAS@value@englishadvisor}
+        {\ucas@label@englishstatement}
+
+        {By}
+
+        {\ucas@value@englishauthor}
+
+        {\ucas@value@englishadvisor}
 
         \vspace*{\stretch{3}}
-        {\UCAS@value@englishinstitute}
+
+        {\ucas@value@englishinstitute}
 
         \vspace*{\stretch{1}}
-        {\UCAS@value@englishdate}
+
+        {\ucas@value@englishdate}
 
         \vspace*{\stretch{3}}
     \end{center}
@@ -269,7 +304,6 @@
       \cleardoublepage[empty]
     \fi
 }
-
 %---------------------------------------------------------------------------%
 %->> Author's declaration
 %---------------------------------------------------------------------------%
@@ -278,31 +312,37 @@
     \thispagestyle{empty}
     {
         \linespread{1.5}
+        \zihao{-4}
 
         \vspace*{2ex}
+
         \begin{center}
-            {\zihao{4}\bfseries\sffamily \UCAS@value@declare@create}
+            {\zihao{4}\bfseries\sffamily \ucas@value@declare@create}
         \end{center}
-        {\quad\quad\UCAS@value@declare@creativity}
+
+        {\ucas@value@declare@creativity}
 
         \vspace*{3ex}
-        \begin{flushright}
-  			{\UCAS@value@declare@s \hspace*{8em}} \\
-			{\UCAS@value@declare@d \hspace*{8em}}
-  		\end{flushright}
+
+        {\hfill{} {\ucas@value@declare@s \hspace*{14em}}}
+
+        {\hfill{} {\ucas@value@declare@d \hspace*{14em}}}
 
         \vspace*{6ex}
+
         \begin{center}
-            {\zihao{4}\bfseries\sffamily \UCAS@value@declare@right}
+            {\zihao{4}\bfseries\sffamily \ucas@value@declare@right}
         \end{center}
-        {\quad\quad\UCAS@value@declare@rights}
-        {\UCAS@value@declare@rule}
+
+        {\ucas@value@declare@rights}
+
+        {\ucas@value@declare@rule}
 
         \vspace*{3ex}
-        \begin{flushright}
-			\hfill{} {\UCAS@value@declare@s \hspace*{10em}{\UCAS@value@declare@t}\hspace*{8em}} \\
-  			\hfill{} {\UCAS@value@declare@d \hspace*{10em}{\UCAS@value@declare@d}\hspace*{8em}}
-  		\end{flushright}
+
+        {\hfill{} {\ucas@value@declare@s \hspace*{10em} \ucas@value@declare@t \hspace*{9em}}}
+
+        {\hfill{} {\ucas@value@declare@d \hspace*{10em} \ucas@value@declare@d \hspace*{9em}}}
 
         \vspace*{3ex}
     }
@@ -312,17 +352,17 @@
         \cleardoublepage[empty]
     \fi
 }
-
 %---------------------------------------------------------------------------%
 %->> New environments
 %---------------------------------------------------------------------------%
 %- define chinese keywords
 \newcommand{\keywords}[1]{%
-    \noindent {\bfseries \UCAS@label@keywords} #1}
+    \vspace{\baselineskip}
+    \noindent {\bfseries \ucas@label@keywords} #1}
 %- define engish keywords
 \newcommand{\englishkeywords}[1]{%
-    \noindent {\bfseries \UCAS@label@englishkeywords} #1}
-
+    \vspace{\baselineskip}
+    \noindent {\bfseries \ucas@label@englishkeywords} #1}
 %---------------------------------------------------------------------------%
 %->> Configure table of contents
 %---------------------------------------------------------------------------%
@@ -386,6 +426,6 @@
         \endgroup
     \fi
 }
-
+%---------------------------------------------------------------------------%
 \endinput
 

@@ -4,6 +4,13 @@
 \section{引言}
 在计算机视觉领域的每个研究方向，都存在着一些为大家所熟知的数据库，例如，在物体检测与物体分割领域，常用的有 PASCAL VOC 数据库~\cite{Everingham2014ThePV} 以及 Microsoft COCO 数据库~\cite{Lin2014MicrosoftCC}；在人脸识别领域，则有 LFW（labeled faces in the wild）~\cite{LFWTech}，YTF（YouTube Faces）~\cite{Wolf2011FaceRI} 以及 MegaFace Challenge 数据库~\cite{kemelmacher2016megaface}。一个图片数量丰富，标注准确的数据库，对于推动一个研究领域的发展有着重要的作用。正是由于 PASCAL VOC 数据库和 ImageNet 数据库~\cite{Russakovsky2015ImageNetLS} 的提出，研究者可以在同一数据库用相同的标准比较自己的算法，才推动了研究者对图像分类方法的研究，从而使得图像分类的准确率不断提高，直至超过人类的水平，一个好的数据库对相关研究的推动可见一斑。
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.7\linewidth]{chapter_firearm_ukb_images.jpg}
+	\caption{UKB 数据集中一些示例图片}
+	\label{fig:gun_sell_group}
+\end{figure}
+
 图像检索领域，也有一些通用的数据库，最常用的数据库有牛津大学 Visual Geometry Group （VGG）建立的 Oxford building 数据集~\cite{Philbin2007ObjectRW} （简称 Oxford5k），Paris building 数据集~\cite{Philbin2008LostIQ} （简称 Paris6k），法国 INRIA 建立的 Holidays 数据集~\cite{Jgou2008HammingEA} 以及 Nist{\'e}r 和 Stew{\'e}nius 建立的 UKBench 数据集~\cite{Nistr2006ScalableRW} （简称 UKB）。这些数据库的提出时间都较早，建立的时间都在基于深度学习的图像检索方法兴起之前，因此这些数据库的规模都较小，例如 Holiday 数据集只有 1491 张照片，Paris6k 和 Oxford5k 的规模在 5000--6000 张；另外，有的数据库的图片比较简单，例如 UKB 数据集，如图~\ref{fig:ukb_images} 所示，相似图片均是同一物体或场景在不同角度下的照片，因此识别起来相对简单。
 
 在深度学习兴起以后，基于卷积神经网络的图像检索方法也开始流行，众所周知，基于深度学习的方法，在网络的训练过程中往往需要大量的训练图片，否则学习到的模型很容易过拟合，即使我们是在已有的网络的基础上进行微调 （fine-tuning），也需要一定量的图片，才能取得不错的检索精度。另一方面，在目前的社交网络上，充斥着各种各样的枪支图片，例如许多 Facebook 的用户出于不同的目的在自己的 Facebook 账户上传枪支照片~\cite{Drange2016,MELE2016FacebookBG}，这些枪支图片可能会激起暴力，也可能会助长枪支交易的泛滥（参见图~\ref{fig:gun_sell_group}），因此有必要对枪支图片进行必要的监管与处理。基于这两点考虑，为了方便研究者针对这方面的应用进行研究，我们收集了一个大规模的枪支图片数据库，该数据库包含 167 类不同类型的枪支，总图片数为 14755 张，我们将其简称为 Firearm14k。
@@ -12,18 +19,11 @@
 
 \begin{figure}[!t]
 	\centering
-	\includegraphics[width=0.8\linewidth]{chapter_firearm_facebook-gun-sell.jpg}
+	\includegraphics[width=0.7\linewidth]{chapter_firearm_facebook-gun-sell.jpg}
 	\caption[Facebook 上一个枪支交易群]{Facebook 上一个枪支交易群\footnotemark}
 	\label{fig:ukb_images}
 \end{figure}
 \footnotetext{图片来源：\url{https://nyti.ms/2JksjoL}}
-
-\begin{figure}[!t]
-	\centering
-	\includegraphics[width=0.7\linewidth]{chapter_firearm_ukb_images.jpg}
-	\caption{UKB 数据集中一些示例图片}
-	\label{fig:gun_sell_group}
-\end{figure}
 
 \section{数据库图片收集}\label{sec:image_collect_clean}
 
