@@ -18,8 +18,8 @@ dist_neg3 = np.load("data/dist_neg_retr_from_cls_run10_full.npy")
 
 
 num_bin = 500
-# colors = ['#1b9e77', '#d95f02']
-colors = ["#bebebe", "#3a3a3a"]
+colors = ['#1b9e77', '#d95f02']
+# colors = ["#bebebe", "#3a3a3a"]
 fig, (ax1, ax2, ax3)= plt.subplots(nrows=3, ncols=1, figsize=(10, 6))
 
 

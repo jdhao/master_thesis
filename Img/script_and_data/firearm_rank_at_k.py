@@ -32,7 +32,7 @@ prop = mfm.FontProperties(fname=font_path)
 
 colors = ["#e6194b",
           "#3cb44b",
-          "#ffe119",
+          "#8772c9",
           "#0082c8",
           "#f58231",
           "#911eb4"]
