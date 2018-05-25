@@ -348,7 +348,15 @@ FUNCTION {is.in.chinese}
 FUNCTION {format.et.al}
 { is.in.chinese
     { "等"}
-    { "et~al." }
+    { lang.ja entry.lang =
+        { "他"}
+        { lang.ru entry.lang =
+            { "идр" }
+            { "et~al." }
+          if$
+        }
+      if$
+    }
   if$
 }
 
@@ -376,7 +384,8 @@ FUNCTION {format.names}
             { format.et.al }
             { t get.str.lang 'name.lang :=
               name.lang lang.en =
-                { t #1 "{vv~}{ll}{ f{~}}" format.name$ "u" change.case$
+                { t #1 "{vv~}{ll}{ f{~}}" format.name$
+                  "u" change.case$
                   t #1 "{, jj}" format.name$ *
                 }
                 { t #1 "{ll}{ff}" format.name$ }
@@ -909,20 +918,6 @@ FUNCTION {format.edition}
   if$
 }
 
-FUNCTION {format.sine.loco}
-{ is.in.chinese
-    { "[出版地不详]" }
-    { "[S.l.]" }
-  if$
-}
-
-FUNCTION {format.sine.nomine}
-{ is.in.chinese
-    { "[出版者不详]" }
-    { "[s.n.]" }
-  if$
-}
-
 FUNCTION {format.publisher}
 { publisher empty$ not
     { publisher }
@@ -942,36 +937,17 @@ FUNCTION {format.publisher}
   if$
 }
 
-FUNCTION {format.sine.loco.sine.nomine}
-{ is.in.chinese
-    { "[出版地不详: 出版者不详]" }
-    { "[S.l.: s.n.]" }
-  if$
-}
-
 FUNCTION {format.address.publisher}
 { address empty$ not
     { address
       format.publisher empty$ not
         { ": " * format.publisher * }
-        { url empty$ doi empty$ and
-            { ": " * format.sine.nomine * }
-            'skip$
-          if$
-        }
+        'skip$
       if$
     }
-    { url empty$ doi empty$ and
-        { format.publisher empty$ not
-            { format.sine.loco ": " * format.publisher * }
-            { format.sine.loco.sine.nomine }
-          if$
-        }
-        { format.publisher empty$ not
-            { format.publisher }
-            { "" }
-          if$
-        }
+    { format.publisher empty$ not
+        { format.publisher }
+        { "" }
       if$
     }
   if$
@@ -992,6 +968,10 @@ FUNCTION {format.journal.number}
     { "\penalty0 (" number * ")" * }
     { "" }
   if$
+}
+
+FUNCTION {format.journal}
+{ journal
 }
 
 FUNCTION {format.periodical.year.volume.number}
@@ -1201,7 +1181,7 @@ FUNCTION {article.in.journal}
   "J" set.mark
   format.mark "" output.after
   new.block
-  journal "journal" output.check
+  format.journal "journal" output.check
   format.date "year" output.check
   volume output
   format.journal.number "" output.after
