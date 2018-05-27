@@ -13,7 +13,12 @@
 
 为了解决网络训练过程中相似图像对（similar image pair）与不相似图像对（dis-similar image pair）贡献的损失不平衡的问题，我们提出了基于双阈值对比损失函数的方法。在该方法中，我们分别给相似与不相似图像对设定阈值，因此在模型训练过程中，正负图像对贡献的损失能够更加平衡。在实验过程中，我们通过采样相似与不相似图像对图像特征距离，得到距离的概率分布，然后在此基础上通过实验选出相似与不相似图像对对应的最佳阈值。实验表明，我们的提出的双阈值方法在相同的情况下的检索性能比传统的单阈值方法高出 34.2\% （使用的基础模型为 VGGNet~\cite{Simonyan2014VeryDC}）。为了解决原始的 ImageNet 数据集与 Firearm14k 数据库之间差异过大的问题，我们提出了两步训练的策略。具体来说，我们首先在 Firearm14k 上用分类任务来微调原始的模型，然后在此基础上，使用双阈值误差来微调得到的模型。这种策略非常有效，进一步提升了模型的检索性能。
 
-本章的结构组织如下：\ref{sec:double_margin_method}~节简要回顾单阈值对比损失，然后介绍我们提出的基于双阈值对比损失的方法，\ref{sec:double_margin_exprt}~节介绍具体的实验结果，包括双阈值与单阈值对比损失方法的结果比较，两步训练的效果，阈值的选择对实验结果的影响，最后比较了我们的方法和其他的方法在不同维度下的检索效果。\ref{sec:double_margin_related_work}~节介绍了一些与本章的方法直接相关的工作，\ref{sec:double_margin_conclusion}~节总结本章的内容。
+本章的结构组织如下：\ref{sec:double_margin_related_work}~节介绍了一些与本章的方法直接相关的工作，\ref{sec:double_margin_method}~节简要回顾单阈值对比损失，然后介绍我们提出的基于双阈值对比损失的方法，\ref{sec:double_margin_exprt}~节介绍具体的实验结果，包括双阈值与单阈值对比损失方法的结果比较，两步训练的效果，阈值的选择对实验结果的影响，最后比较了我们的方法和其他的方法在不同维度下的检索效果。\ref{sec:double_margin_conclusion}~节总结本章的内容。
+
+\section{相关工作}\label{sec:double_margin_related_work}
+枪支图像的检索问题之前很少有人研究，Wen 和 Yao~\cite{Wen2005PistolIR} 提出用枪支的轮廓到中心的距离分布来检索相似图片，分布之间的不同用来衡量两个枪支图片的相似度。他们用到的图片背景都比较简单，并且数据库规模很小，大约为 300 张图片。
+
+Babenko 等人~\cite{Babenko2014NeuralCF} 提出使用分类任务微调神经网络，并观察到检索的结果有所提高，他们使用的是交叉熵损失，这种损失并不直接针对检索任务，对未知类别泛化能力不强。Arandjelovic 等人~\cite{Arandjelovic2016NetVLADCA} 将传统的 VLAD 方法用神经网络来实现，使用三元组损失来优化模型，将模型用在了地点检索任务上。Gordo 等人~\cite{Gordo2016DeepIR} 提出使用三元组损失，并学习针对检索任务的图像的特征嵌入方法，他们同时结合了物体检测中的 ROIpooling 方法~\cite{Ren2017FasterRT} 来提升模型对物体的定位能力，提高模型的性能。Radenvoic 等人~\cite{Radenovic2016CNNIR} 则关注于采用 structure from motion 技术，自动从大量图像中产生合适的训练样本对，他们采用了和我们的方法一样的双分支的 Siamese 网络来学习图像特征，发现使用双分支的网络结构能够取得比三分支结构更好的结果。Cao 等人~\cite{Cao2016QuartetnetLF} 使用了和我们的双阈值损失函数相似的方法来处理过图像实例检索问题，他们在实验中采用了更加复杂的网络结构。
 
 \section{基于双阈值对比损失函数的枪支图像检索方法}\label{sec:double_margin_method}
 
@@ -79,7 +84,7 @@ L(I_p, I_q) = \frac{1}{2}[y\max(d - {\alpha}_1, 0)^2 + (1-y)\max({\alpha}_2 - d,
 \subsection{评价指标}
 在实验中，我们在训练集上训练模型，在验证集上采用 mAP 来选择合适的模型。我们使用两种评价指标来报告模型在测试集上的结果。第一种评价指标是 mean average precision (mAP)，mAP 常用来衡量检索系统的总体性能。第二个评价指标是 Rank-k 准确率~\cite{Jgou2011ProductQF,Song2016DeepML}，Rank-k 准确率计算的是在所有的查询图片中，其 $K$-邻近图片中存在至少一张同类图片的查询图片的比例。Rank-k 准确率注重于检索方法返回的前面的结果，在实际场景下，如图像搜索引擎及电商网站在线购物，用户更关心前面返回 $K$ 个结果，因此 Rank-k 准确率这个指标更加能够反映实际需求。
 
-\subsection{实验细节}
+\subsection{实验设置}
 我们使用了开源框架 PyTorch\footnote{\url{http://pytorch.org/}} 来实现我们的整个方法，我们使用的服务器搭载了英伟达 TITAN X（Pascal） GPU，显存容量为 12G，同时搭载两颗英特尔 Xeon 12 核 CPU。在实验中，我们所用的基础模型为 VGG16 模型~\cite{Simonyan2014VeryDC}，该模型是在 ImageNet 分类数据库上训练得到的。针对我们的任务，我们对模型进行了一些修改，我们把模型的全连接部分去掉，只使用了该模型的全卷积部分。
 
 我们使用了两步训练的办法对模型进行了训练，下面分别介绍这两步训练的过程。
@@ -245,11 +250,6 @@ l = -w_k \log\frac{\exp(x_k)}{\sum_{i=0}^{126} \exp(x_i)}
 首先，我们报告不同的方法在 mAP 指标上的结果，所有的实验结果参见表~\ref{table:firearm_retrieval_compare_with_soa}。这里的结果表明，off-the-shelf 模型（表~\ref{table:firearm_retrieval_compare_with_soa}，\textbf{上部}）的 mAP 分数都相对较低，这是由于 Firearm14k 数据库和 ImageNet 数据库的巨大差异，这些预训练的模型无法生成具有区分性的特征，因而检索效果并不理想。使用单阈值方法微调的模型~\cite{Radenovic2016CNNIR}表现也不理想，使用三元组损失的 TripletNet~\cite{Gordo2016DeepIR}的表现相对单阈值方法提高了很多。最后，我们的提出的方法在不同的特征维度下都超过了其他方法。值得注意的是，我们的方法在特征维度被压缩到极低的情况下仍然表现良好，例如当特征维度为 16 时，检索的 mAP 仍然达到了 61.59\%。
 
 我们也计算了不同方法在 Firearm14k 测试集上的 Rank-k 准确率，在这个实验中，我们使用的是 512 维特征，得到的实验结果如图~\ref{fig:rank_k_accuracy_compare}所示。从图中可以看出，当 $k$ 比较大时（$k=16$ 或 $k=32$ 时），各种方法的 Rank-k 准确率都较高，这说明 Rank-k 指标是比较容易的指标；当 $k$ 比较小时，SPoC~\cite{Babenko2015AggregatingLD}，NeuralCode~\cite{Babenko2014NeuralCF} 和 Siamese-MAC~\cite{Radenovic2016CNNIR} 等方法，表现较差，TripletNet 方法~\cite{Gordo2016DeepIR} 和我们的方法此时表现较好，特别是我们的方法，在 $k=1$ 或 $k=2$ 时，表现要优于 TripletNet 方法。
-
-\section{相关工作}\label{sec:double_margin_related_work}
-枪支图像的检索问题之前很少有人研究，Wen 和 Yao~\cite{Wen2005PistolIR} 提出用枪支的轮廓到中心的距离分布来检索相似图片，分布之间的不同用来衡量两个枪支图片的相似度。他们用到的图片背景都比较简单，并且数据库规模很小，大约为 300 张图片。
-
-Babenko 等人~\cite{Babenko2014NeuralCF} 提出使用分类任务微调神经网络，并观察到检索的结果有所提高，他们使用的是交叉熵损失，这种损失并不直接针对检索任务，对未知类别泛化能力不强。Arandjelovic 等人~\cite{Arandjelovic2016NetVLADCA} 将传统的 VLAD 方法用神经网络来实现，使用三元组损失来优化模型，将模型用在了地点检索任务上。Gordo 等人~\cite{Gordo2016DeepIR} 提出使用三元组损失，并学习针对检索任务的图像的特征嵌入方法，他们同时结合了物体检测中的 ROIpooling 方法~\cite{Ren2017FasterRT} 来提升模型对物体的定位能力，提高模型的性能。Radenvoic 等人~\cite{Radenovic2016CNNIR} 则关注于采用 structure from motion 技术，自动从大量图像中产生合适的训练样本对，他们采用了和我们的方法一样的双分支的 Siamese 网络来学习图像特征，发现使用双分支的网络结构能够取得比三分支结构更好的结果。Cao 等人~\cite{Cao2016QuartetnetLF} 使用了和我们的双阈值损失函数相似的方法来处理过图像实例检索问题，他们在实验中采用了更加复杂的网络结构。
 
 \section{本章小结}\label{sec:double_margin_conclusion}
 在本章中，我们详细介绍了提出的双阈值对比损失函数，我们提出该方法的动机主要有两个，一是目前单阈值对比损失函数无法保证正负图像对在训练时贡献的损失的平衡，二是我们提出的 Firearm14k 数据库与 ImageNet 数据库之间的巨大差异导致直接微调模型效果欠佳。我们提出使用双阈值对比损失函数来解决模型训练过程中正负图像对贡献的损失不平衡的问题，同时提出使用两步训练的策略来解决数据库之间图像差异大的问题。在实验部分，我们把提出的方法与当前的主流方法进行了比较，并给出可视化的分析，证明我们的方法为什么有效，实验结果表明我们的方法在不同的特征维度下检索效果都超过了当前的主流方法。
