@@ -7,28 +7,29 @@
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.7\linewidth]{chapter_firearm_ukb_images.jpg}
-	\caption{UKB 数据集中一些示例图片}
+	\bicaption{UKB 数据库中一些示例图片}{Some of the example images in UKB dataset}
 	\label{fig:gun_sell_group}
 \end{figure}
 
-图像检索领域，也有一些通用的数据库，最常用的数据库有牛津大学 Visual Geometry Group （VGG）建立的 Oxford building 数据库~\cite{Philbin2007ObjectRW} （简称 Oxford5k），Paris building 数据库~\cite{Philbin2008LostIQ} （简称 Paris6k），法国 INRIA 建立的 Holidays 数据库~\cite{Jgou2008HammingEA} 以及 Nist{\'e}r 和 Stew{\'e}nius 建立的 UKBench 数据库~\cite{Nistr2006ScalableRW} （简称 UKB）。这些数据库的提出时间都较早，建立的时间都在基于深度学习的图像检索方法兴起之前，因此这些数据库的规模都较小，例如 Holiday 数据集只有 1491 张照片，Paris6k 和 Oxford5k 的规模在 5000--6000 张；另外，有的数据库的图片比较简单，例如 UKB 数据集，如图~\ref{fig:ukb_images} 所示，相似图片均是同一物体或场景在不同角度下的照片，因此识别起来相对简单。
+图像检索领域，也有一些通用的数据库，最常用的数据库有牛津大学 Visual Geometry Group （VGG）建立的 Oxford building 数据库~\cite{Philbin2007ObjectRW} （简称 Oxford5k），Paris building 数据库~\cite{Philbin2008LostIQ} （简称 Paris6k），法国 INRIA 建立的 Holidays 数据库~\cite{Jgou2008HammingEA} 以及 Nist{\'e}r 和 Stew{\'e}nius 建立的 UKBench 数据库~\cite{Nistr2006ScalableRW} （简称 UKB）。这些数据库的提出时间都较早，建立的时间都在基于深度学习的图像检索方法兴起之前，因此这些数据库的规模都较小，例如 Holiday 数据库只有 1491 张照片，Paris6k 和 Oxford5k 的规模在 5000--6000 张；另外，有的数据库的图片比较简单，例如 UKB 数据库，如图~\ref{fig:ukb_images} 所示，相似图片均是同一物体或场景在不同角度下的照片，因此识别起来相对简单。
+
+\begin{figure}[!t]
+	\centering
+	\includegraphics[width=0.7\linewidth]{chapter_firearm_facebook-gun-sell.jpg}
+	\bicaption[Facebook 上一个枪支交易群]{Facebook 上一个枪支交易群\footnotemark}{A gun sell group in Facebook}
+	\label{fig:ukb_images}
+\end{figure}
+\footnotetext{图片来源：\url{https://nyti.ms/2JksjoL}}
 
 在深度学习兴起以后，基于卷积神经网络的图像检索方法也开始流行，众所周知，基于深度学习的方法，在网络的训练过程中往往需要大量的训练图片，否则学习到的模型很容易过拟合，即使是在已有的模型基础上进行微调 （fine-tuning），也需要一定量的图片，才能取得不错的检索精度。另一方面，在目前的社交网络上，充斥着各种各样的枪支图片，例如许多 Facebook 的用户出于不同的目的在自己的 Facebook 账户上传枪支照片~\cite{Drange2016,MELE2016FacebookBG}，这些枪支图片可能会激起暴力，也可能会助长枪支交易的泛滥（参见图~\ref{fig:gun_sell_group}），因此有必要对枪支图片进行必要的监管与处理。基于这两点考虑，为了方便研究者针对该领域的应用进行研究，我们收集了一个大规模的枪支图片数据库，该数据库包含 167 类不同类型的枪支，总图片数为 14755 张，我们将其简称为 Firearm14k。
 
 本章的结构组织如下：\ref{sec:image_collect_clean}~节介绍数据库图像的收集与清理过程，\ref{sec:image_labeling}~节介绍枪支图像的标注过程，然后 \ref{sec:label_quality_assess_filtering}~节介绍我们如何对各个标注人员的评分质量进行评估，从而筛选出有效的图片。\ref{sec:dataset_stats}~节介绍枪支数据库的划分（训练集，验证集，测试集），给出各个集合的具体信息，介绍数据库的一些特点，并且给出一些数据库中的示例图片。
 
-\begin{figure}[!t]
-	\centering
-	\includegraphics[width=0.7\linewidth]{chapter_firearm_facebook-gun-sell.jpg}
-	\caption[Facebook 上一个枪支交易群]{Facebook 上一个枪支交易群\footnotemark}
-	\label{fig:ukb_images}
-\end{figure}
-\footnotetext{图片来源：\url{https://nyti.ms/2JksjoL}}
 
 \section{数据库图片收集}\label{sec:image_collect_clean}
 
 \subsection{图像的收集}
-为了构建我们的枪支数据库，首先我们需要找到一些关键词，我们从一些论坛以及网站搜集了一批枪支名称的关键词。由于一个枪支可能会有不同的型号以及很多仿照的型号，例如，根据维基百科，\emph{M16}\footnote{\url{https://en.wikipedia.org/wiki/M16_rifle}}这个枪支就有至少三种不同的型号，分别为 \emph{M16A2}, \emph{M16A3}, \emph{M16A4}，同时也有一些仿照的枪支，例如 \emph{XM177}。因此有必要处理收集到的关键词列表，去掉重复的关键词。我们参考维基百科对各个枪支类型的介绍，认真审查了得到的关键词列表，确保一个枪支和它的不同型号以及仿照枪支不同时出现。经过人工的过滤以后，我们总共得到了 167 个关键词，这些关键词对应着不同的枪支类型，如「来复枪」，「手枪」，「散弹枪」等。
+为了构建我们的枪支数据库，首先我们需要找到一些关键词，我们从一些论坛以及网站搜集了一批枪支名称的关键词。由于一个枪支可能会有不同的型号以及很多仿照的型号，例如，根据维基百科，\emph{M16}\footnote{\url{https://en.wikipedia.org/wiki/M16_rifle}}这个枪支就有至少三种不同的型号，分别为 \emph{M16A2}, \emph{M16A3}, \emph{M16A4}，同时也有一些仿照的枪支，例如 \emph{XM177}。因此有必要处理收集到的关键词列表，去掉重复的关键词。我们参考维基百科对各个枪支类型的介绍，认真审查了得到的关键词列表，确保一个枪支和它的不同型号以及仿照枪支不同时出现。经过人工的过滤以后，我们总共得到了 167 个关键词，这些关键词对应着不同的枪支类型，如“来复枪”，“手枪”，“散弹枪”等。
 
 为了抓取图片，我们编写了一个简单的图片爬虫，用来下载图片。在得到这些枪支名称关键词以后，我们使用谷歌图像搜索引擎\footnote{\url{https://images.google.com/}}，把这些关键词作为查询，提交到搜索引擎。对于每一个关键词，由于对应的枪支类型流行程度不同，因此返回的结果数目也不同，我们使用图片爬虫下载其中 300 -- 500 张图像作为初步的结果。
 
@@ -46,7 +47,7 @@
 \begin{figure}[!t]
 	\centering
 	\includegraphics[width=\linewidth]{chapter_firearm_ol_label_system.png}
-	\caption{在线图像标注系统的前端评分界面}
+	\bicaption{在线图像标注系统的前端评分界面}{The frontend scoring interface of the online labelling system}
 	\label{fig:online_label_system}
 \end{figure}
 
@@ -62,7 +63,7 @@
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\linewidth]{chapter_firearm_overall_individual_devi.pdf}
-	\caption[枪支数据库打分数据的偏差统计信息]{枪支数据库打分数据的偏差统计信息。\textbf{左}：总体的偏差信息；\textbf{右}: 个人的偏差信息}
+	\bicaption[枪支数据库打分数据的偏差统计信息]{枪支数据库打分数据的偏差统计信息。\textbf{左}：总体的偏差信息；\textbf{右}: 个人的偏差信息}{The deviation statistics of the Firearm dataset. \textbf{Left}: overall deviation; \textbf{Right}: personal deviation}
 	\label{fig:deviation_info}
 \end{figure}
 
@@ -85,10 +86,9 @@ OD = \frac{15 - \sum_{i=0}^{4}\sum_{j=i}^{4}C[i,j]}{15}\, ,
 在图~\ref{fig:deviation_info} 中，我们展示了偏差信息的总体分布情况与个人分布情况：左图展示的是总体的偏差分布情况，我们对各个类别偏差按照从小到大进行了排序；右图展示的是每个人的偏差分布情况\footnote{为了滤除一些噪声，显示出趋势，我们对曲线进行了平滑处理}，和总体偏差采用了相同的类别编号顺序。一个标注者在某类上偏差越大，那么他在该类上的评分就越不可靠。从图~\ref{fig:deviation_info} 中可以看出，标注者 1 在整体上有着最大的个人偏差（这意味着该标注者标注质量较差），标注者 3 和 4 相对来说，个人偏差较小，因此他们的标注质量较好，标注者 0 和 2 的个人偏差最小，因此他们的标注质量是最好的。
 
 然后，我们统计了每个标注者在多少个类别上具有最大的个人偏差，这个指标可以用来衡量每个人的评分质量。在表~\ref{table:largest_devi_num} 中，我们列出了统计数据。从中可以看出，在所有的 167 类中，标注者 1 在其中 93 类有最大的偏差值，这表明标注者 1 总体的标注质量很差；标注 3 和 4 在其中 33 类上有最大偏差值，这表明他们的标注质量中等，对于标注者 0 和 2，他们分别只在 167 类中的 4 类有最大的偏差值，这表明他们的标注质量是极其优秀的。
-
-\begin{table}[!t]
+\begin{table}[h]
 	\centering
-	\caption{每个标注者有最大的个人偏差的类别数目}
+	\bicaption{每个标注者有最大的个人偏差的类别数目}{The number of classes in which each labeller has the largest personal deviation}
 	\begin{tabular}{@{}llllll@{}}
 		\toprule
 		标注者编号	    &  0		& 1 & 2 & 3 & 4  \\
@@ -101,8 +101,15 @@ OD = \frac{15 - \sum_{i=0}^{4}\sum_{j=i}^{4}C[i,j]}{15}\, ,
 
 \begin{figure}[!t]
 	\centering
+	\includegraphics[width=\linewidth]{chapter_firearm_dataset_cls_img_num.pdf}
+	\bicaption{枪支图像数据库各个类别图片数量}{The image number in different classes in the Firearm14k dataset}
+	\label{fig:dataset_cls_img_num}
+\end{figure}
+
+\begin{figure}[!t]
+	\centering
 	\includegraphics[width=\linewidth]{chapter_firearm_dataset_aspect_ratio.pdf}
-	\caption{Firearm14k 数据与其他数据库图片尺寸比值的概率分布}
+	\bicaption{Firearm14k 与其他数据库图片尺寸比值的概率分布}{The probability distribution of image size ratios in Firearm14k and other dataset}
 	\label{fig:dataset_aspect_ratio}
 \end{figure}
 
@@ -119,12 +126,6 @@ s = \sum_{i=0}^{4}w_{i}s_{i}\, ,
 
 其中 $s_i$ 表示第 $i$ 个标注者对图片的评分。然后我们选择相似性得分在 6 分以上（含 6 分）的图片作为每类的有效图片，这些图片构成了我们的枪支数据库。
 
-\begin{figure}[!t]
-	\centering
-	\includegraphics[width=\linewidth]{chapter_firearm_dataset_cls_img_num.pdf}
-	\caption{枪支图像数据库各个类别图片数量}
-	\label{fig:dataset_cls_img_num}
-\end{figure}
 
 \section{数据库的划分与相关统计信息}\label{sec:dataset_stats}
 最终，我们得到的枪支数据库含有 14755 张图片，这些图片来自 167 类不同类型的枪支，我们将该数据库命名为 Firearm14k。该数据库有几个值得注意的特点：
@@ -140,7 +141,7 @@ s = \sum_{i=0}^{4}w_{i}s_{i}\, ,
 \begin{figure}[!t]
 	\centering
 	\includegraphics[width=\linewidth]{chapter_firearm_dataset_images.pdf}
-	\caption{来自 Firearm14k 数据库的一些示例图片}
+	\bicaption{来自 Firearm14k 数据库的一些示例图片}{Some of the example images from the Firearm14k dataset}
 	\label{fig:dataset_sample_images}
 \end{figure}
 
@@ -149,9 +150,9 @@ s = \sum_{i=0}^{4}w_{i}s_{i}\, ,
 
 我们把数据库划分为训练集，验证集以及测试集，每个集合分别占总的图片量的大约 65\%，10\% 和 25\%，为了模拟真实的检索场景，三个集合的图片类别互不交叉 （具体做法是把 167 类图片随机划分为 3 个互不相交的类的集合，使得三个集合的图片数目占总图片量的比例接近预定的比例）。对于验证集和测试集，我们从每一类图片中随机选择了两张作为查询图片\footnote{验证集的查询图像中，有一张标注有错误，我们从查询图片中去掉了该图片}，我们把剩余的所有图片作为分别作为验证集和测试集的图像库。在表~\ref{table:train_val_test_stat} 中，我们列出了 Firearm14k 数据库的详细统计信息，表~\ref{table:train_val_test_stat} 第 2 行与第 3 行列出了三个集合的图片类别数目，图像数目。第 4 行和第 5 行列出了验证集以及测试集的查询图片数量以及对应的数据库图片数量。
 
-\begin{table}[!t]
+\begin{table}[h]
 	\centering
-	\caption[Firearm14k 数据库详细统计信息]{Firearm14k 数据库详细统计信息}
+	\bicaption[Firearm14k 数据库详细统计信息]{Firearm14k 数据库详细统计信息}{Detailed statistics of the Firearm14k dataset}
 	\label{table:train_val_test_stat}
 	\begin{tabular}{@{}lllll@{}}
 		\toprule

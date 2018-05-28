@@ -3,7 +3,7 @@
 \chapter{基于多尺度全卷积网络的图像实例检索方法}\label{chapter:mfc}
 
 \section{引言}
-图像检索是学术界以及工业界都非常关注的一个问题，按照检索的精细程度来分类，我们可以把图像检索方法分为两大类：第一类是基于类别的检索，在这种设定下，只要返回的某个搜索结果与查询图片属于同一大类（如「车」，「猫」等），就认为该结果和查询图像是相关的；另外一类方法是精细检索，在本章中，我们研究的是图像实例级别的检索，在这种情况下，只有当返回的图片包含和查询图片相同的物体实例或者场景的情况下，我们才认为该图片与查询图片相关。尽管图像的实例检索是一个经典问题~\cite{Sivic2003VideoGA,Nistr2006ScalableRW,Philbin2007ObjectRW,Razavian2014CNNFO,Babenko2014NeuralCF,Tolias2015ParticularOR,Babenko2015AggregatingLD}，前人的研究已经提出了很多的方法，但是由于图像中物体尺寸，方向，位置以及光照等条件，在不同图像上变化很大，图像实例检索方法仍不能很好处理这些问题。
+图像检索是学术界以及工业界都非常关注的一个问题，按照检索的精细程度来分类，我们可以把图像检索方法分为两大类：第一类是基于类别的检索，在这种设定下，只要返回的某个搜索结果与查询图片属于同一大类（如“车”，“猫”等），就认为该结果和查询图像是相关的；另外一类方法是精细检索，在本章中，我们研究的是图像实例级别的检索，在这种情况下，只有当返回的图片包含和查询图片相同的物体实例或者场景的情况下，我们才认为该图片与查询图片相关。尽管图像的实例检索是一个经典问题~\cite{Sivic2003VideoGA,Nistr2006ScalableRW,Philbin2007ObjectRW,Razavian2014CNNFO,Babenko2014NeuralCF,Tolias2015ParticularOR,Babenko2015AggregatingLD}，前人的研究已经提出了很多的方法，但是由于图像中物体尺寸，方向，位置以及光照等条件，在不同图像上变化很大，图像实例检索方法仍不能很好处理这些问题。
 
 图像检索领域的经典方法最常使用的是基于 SIFT 局部特征描述子~\cite{Lowe2004DistinctiveIF}的 BOF 方法。通常为了提高检索的效果，研究者经常使用一些后处理技术，例如查询扩展~\cite{Chum2007TotalRA}以及空间验证~\cite{Philbin2007ObjectRW}。近些年来，由于卷积神经网络的流行，研究者也开始研究基于卷积神经网络的图像检索方法。他们的实验显示深度卷积神经网络在图像检索领域的有效性~\cite{Babenko2014NeuralCF,Razavian2014CNNFO,Tolias2015ParticularOR}，他们发现，如果使用全局图像特征并且不使用后处理方法，基于卷积神经网络的方法和传统的 BOF 和局部聚合向量方法 （VLAD）~\cite{Jgou2010AggregatingLD} 性能相似甚至超过这些方法。尽管使用卷积神经网络来表达图像特征取得了这些进步，一些影响从 CNN 提取的图像特征有效性的潜在因素并未被详细研究，例如，图像缩放的策略，影响多尺度特征有效性的因素等。研究清楚这些问题将帮助我们构建更加鲁棒与准确的检索系统。
 
@@ -47,7 +47,7 @@ f = [f_1, f_2, \ldots, f_i, \ldots, f_C]^T\, ,
 \begin{figure}[!t]
 	\centering
 	\includegraphics[width=\linewidth]{chapter_mfc_paris_3scale.pdf}
-	\caption{一张图像的 3 尺度特征表示}
+	\bicaption{一张图像的 3 尺度特征表示}{A 3-scale representation of an image}
 	\label{fig:img_multiscale_feature}
 \end{figure}
 
@@ -107,9 +107,14 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 
 \subsection{实验结果与分析}
 在本部分，我们通过实验研究了不同因素对检索结果的影响，并给出相应的分析。
+
+\noindent\textbf{（1）图像尺寸变化对检索的影响}
+
+我们对 \ref{subsec:img_resize_strategy}~节给出的三种图像尺寸变化的策略进行了实验，对于 \emph{two-fixed} 和
+\emph{one-fixed} 策略，由于图像的尺寸可以选择多种，我们使用网格搜索来找到检索性能最好时对应的图像尺寸。我们发现，总体来说，增加图像的尺寸，对于 \emph{full-query} 或者 \emph{cropped-query} 这两种情况，都会提升检索的效果，试验结果如表~\ref{table:image_size_impact} 所示，表中括号后面的数字表示取得最好的 mAP 时对应使用的图像尺寸。从表上可以看出，对于 \emph{cropped-query} 这种情况，\emph{free} 策略能够有效地提升检索的性能，对于 \emph{full-query}，\emph{free} 与 \emph{one-fixed} 策略则比较接近，但检索的效果都要好于 \emph{two-fixed} 策略。我们可以看出 \emph{one-fixed} 策略此时要稍高于 \emph{free} 策略，但是在使用 \emph{one-fixed} 策略的情况下，图像最小的边长度被固定在 800，因为数据库中大部分图像最小尺寸都要小于 800（在表~\ref{table:min_size_distribution} 中，我们列出不同数据库中的图像最小边尺寸的统计信息，$s$ 代表最小边长度），这种设置将大大增加提取图像特征所需要的计算时间。采用 \emph{free} 方式，不仅减少了特征提取提取时间，并且能够取得很好的检索结果。
 \begin{table}[!t]
 	\centering
-	\caption{不同图像尺寸变化策略之间的比较}
+	\bicaption{不同图像尺寸变化策略之间的比较}{Comparison between different strategies of image resizing}
 	\label{table:image_size_impact}
 	\begin{tabular}{lll}
 		\toprule
@@ -124,7 +129,8 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 
 \begin{table}[!t]
 	\centering
-	\caption[不同数据库中图像最小尺寸落在不同区间的比例]{不同数据库中图像最小尺寸落在各个区间的比例（$s$ 代表最小尺寸）}
+	\captionsetup{justification=centering}
+	\bicaption{不同数据库中图像最小尺寸落在各个区间的比例}{The proportion of images whose minimum sizes are in different intervals in different datasets}
 	\label{table:min_size_distribution}
 	\begin{tabular}{llll}
 		\toprule
@@ -136,11 +142,7 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 		UKB & 100 & 0 & 0 \\
 		\bottomrule
 	\end{tabular}
-	\end{table}
-\noindent\textbf{（1）图像尺寸变化对检索的影响}
-
-我们对 \ref{subsec:img_resize_strategy}~节给出的三种图像尺寸变化的策略进行了实验，对于 \emph{two-fixed} 和
-\emph{one-fixed} 策略，由于图像的尺寸可以选择多种，我们使用网格搜索来找到检索性能最好时对应的图像尺寸。我们发现，总体来说，增加图像的尺寸，对于 \emph{full-query} 或者 \emph{cropped-query} 这两种情况，都会提升检索的效果，试验结果如表~\ref{table:image_size_impact} 所示，表中括号后面的数字表示取得最好的 mAP 时对应使用的图像尺寸。从表上可以看出，对于 \emph{cropped-query} 这种情况，\emph{free} 策略能够有效地提升检索的性能，对于 \emph{full-query}，\emph{free} 与 \emph{one-fixed} 策略则比较接近，但检索的效果都要好于 \emph{two-fixed} 策略。我们可以看出 \emph{one-fixed} 策略此时要稍高于 \emph{free} 策略，但是在使用 \emph{one-fixed} 策略的情况下，图像最小的边长度被固定在 800，因为数据库中大部分图像最小尺寸都要小于 800（在表~\ref{table:min_size_distribution} 中，我们列出不同数据库中的图像最小边尺寸的统计信息），这种设置将大大增加提取图像特征所需要的计算时间。采用 \emph{free} 方式，不仅减少了特征提取提取时间，并且能够取得很好的检索结果。
+\end{table}
 
 实验表明，改变图像的长宽比 (对应 \emph{two-fixed} 策略)对图像信息的干扰最大，因此检索的精度有明显的下降。\emph{one-fixed} 策略虽然没有改变图像的长宽比，但是由于图像尺寸的变化，仍然有一部分信息的丢失。\emph{free} 方式能够编码图像未经扭曲与破坏的信息，因而得到的特征效果更好，能够取得更好的检索结果。
 
@@ -148,11 +150,11 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 
 首先我们通过实验比较了 \ref{subsec:multiscale_img_repr}~节提出的区域特征以及尺度特征融合策略，实验结果表明前两种特征融合策略效果不如第三种策略。如果使用第一种策略，检索效果比第三种策略要低 41\%。同时，使用前两种方法得到的图像特征维度（维度至少为 1500 维）也要高于第三种策略（特征维度为 512 维）。高维度特征也会使得检索时间变长，综合考虑这些，我们采用第三种方式来融合不同的特征。
 
-我们进行了大量实验来确定多尺度方法最好的配置，实验结果列于表~\ref{table:multiscale_exp_result} 中。在表中，「overlap」用来指示每个尺度的各个图像区域是否有重叠部分，「s2」和「s3」表示重叠发生在尺度 2 和 尺度 3。「weighing」表示各个尺度特征融合的时候，是否采用了不同的权重或者相同的权重。「version」则表示每个尺度使用不同数目的图像块。
+我们进行了大量实验来确定多尺度方法最好的配置，实验结果列于表~\ref{table:multiscale_exp_result} 中。在表中，“overlap”用来指示每个尺度的各个图像区域是否有重叠部分，“s2”和“s3”表示重叠发生在尺度 2 和 尺度 3。“weighing”表示各个尺度特征融合的时候，是否采用了不同的权重或者相同的权重。“version”则表示每个尺度使用不同数目的图像块。
 
 \begin{table}[!t]
 	\centering
-	\caption{不同设置下多尺度特征检索结果对比}
+	\bicaption{不同设置下多尺度特征检索结果对比}{The retrieval results of multi-scale features under different settings}
 	\label{table:multiscale_exp_result}
 	\begin{tabular}{@{}lllllll@{}}
 		\toprule
@@ -178,7 +180,7 @@ AP = \sum_{k=1}^{n}P(k)\Delta r(k)
 \end{table}
 
 首先，我们研究了尺度的个数对检索精度的影响。当使用的尺度数目分别为 2 和 3 时，每个尺度对应的区域数目分别为 $\{1\times1, 2\times2\}$ 和
-$\{1\times1, 2\times2, 3\times3\}$。对于尺度为 4 的情况，我们使用三种不同版本的区域数目，用「v1」，「v2」，「v3」表示，所使用的图像区域数目分别为 $\{1\times1, 2\times2, 3\times3, 4\times4\}$，$\{1\times1, 2\times2, 3\times3, 5\times5\}$ 和 $\{1\times1, 2\times2, 3\times3, 6\times6\}$。表~\ref{table:multiscale_exp_result} 中 (a1)、(b1)、(c6) 三行列出了分别使用 2， 3， 4 个尺度表示数据图像特征得到的检索结果。很显然，尺度数目的增加也使得检索结果性能变好，特别是对于 \emph{cropped-query}，检索的结果提高了 3.9\%。
+$\{1\times1, 2\times2, 3\times3\}$。对于尺度为 4 的情况，我们使用三种不同版本的区域数目，用“v1”，“v2”，“v3”表示，所使用的图像区域数目分别为 $\{1\times1, 2\times2, 3\times3, 4\times4\}$，$\{1\times1, 2\times2, 3\times3, 5\times5\}$ 和 $\{1\times1, 2\times2, 3\times3, 6\times6\}$。表~\ref{table:multiscale_exp_result} 中 (a1)、(b1)、(c6) 三行列出了分别使用 2， 3， 4 个尺度表示数据图像特征得到的检索结果。很显然，尺度数目的增加也使得检索结果性能变好，特别是对于 \emph{cropped-query}，检索的结果提高了 3.9\%。
 
 接着，我们研究对不同的尺度的特征采用加权融合的方式是否会提升检索的效果。我们使用的不同的尺度的特征加权融合方式类似空间金字塔匹配方法~\cite{Lazebnik2006BeyondBO}，也就是说，给来自粗糙尺度上特征更少的权重，给来自精细尺度的特征更大的权重。假设当前总共有 $L$ 个尺度，对应的特征为 $f^1, f^2, \ldots, f^L$，则图像特征 $f$ 计算方式为:
 
@@ -188,7 +190,7 @@ f = \frac{1}{2^{L-1}}f^1 + \sum_{i=2}^{L}\frac{1}{2^{L-i+1}}f^i\, .
 
 \noindent关于空间金字塔匹配方法更多的细节，可以参见 Labebnik 等的论文~\cite{Lazebnik2006BeyondBO}。比较 (a1) 和 (a2) 行的结果，似乎加权的方式可以提升检索的性能。我们做了更多的实验，发现随着尺度数目的提高，利用加权方式来求图像特征并不能提高检索的性能，反而得到了更差的结果，例如，比较 (b1)(b2) 两行的结果，或者比较 (c1)(c2) 两行。这里的结果表明，深度学习提取的特征和传统的特征描述子不同，因此当我们使用对传统的 SIFT 特征有效的方式时，应该有所警惕~\cite{Babenko2015AggregatingLD}。基于这里的实验结果，我们在计算图像特征时，不使用权重不同的策略。
 
-最后，我们研究了同一尺度下不同图像区域重叠（overlapping）是否会提高检索的结果。对于不同尺度数目，我们在一个或者两个尺度下使用重叠的策略。对于行 (b1)(b3) 和 (c1)(c3)，我们观察到使用重叠的方式提高了 \emph{full-query} 情况下的结果，但是却降低了 \emph{cropped-query} 情况下的检索结果。但是对于尺度数目为 4 ，版本是「v3」的情况（比较 (c7)(c8)），我们可以观察到对于 \emph{full-query} 和 \emph{cropped-query}，检索结果都有所提高。因此计算最终的图像特征时，我们在尺度 2 和 尺度 3 上使用了重叠的策略。
+最后，我们研究了同一尺度下不同图像区域重叠（overlapping）是否会提高检索的结果。对于不同尺度数目，我们在一个或者两个尺度下使用重叠的策略。对于行 (b1)(b3) 和 (c1)(c3)，我们观察到使用重叠的方式提高了 \emph{full-query} 情况下的结果，但是却降低了 \emph{cropped-query} 情况下的检索结果。但是对于尺度数目为 4 ，版本是“v3”的情况（比较 (c7)(c8)），我们可以观察到对于 \emph{full-query} 和 \emph{cropped-query}，检索结果都有所提高。因此计算最终的图像特征时，我们在尺度 2 和 尺度 3 上使用了重叠的策略。
 
 \begin{figure}[!t]
 	\centering
@@ -203,22 +205,22 @@ f = \frac{1}{2^{L-1}}f^1 + \sum_{i=2}^{L}\frac{1}{2^{L-i+1}}f^i\, .
 		\includegraphics[width=\linewidth]{chapter_mfc_ukb_pca_other_self.pdf}
 		\subcaption{UKB}
 	\end{subfigure}
-	\caption{学习 PCA 与白化矩阵的方式对检索结果的影响}
+	\bicaption{学习 PCA 与白化矩阵的方式对检索结果的影响}{The impact of learning PCA and whitening matrix using different datasets}
 	\label{fig:pca_self_other_exp}
 \end{figure}
 
 \noindent\textbf{（3）主成份分析与白化方法}
 
-我们在 Oxford5k 以及 UKB 数据库上进行了 PCA 与白化对检索影响的实验。对于 Oxford5k 数据库，我们分别从 Oxford5k 数据库本身（分为「full-self」以及「crop-self」两种情况）或者从 Paris6k 数据库（分为「full-paris」以及「crop-paris」两种情况）学习 PCA 与白化矩阵；对于 UKB 数据集，PCA 与白化矩阵则从 UKB 本身（称为「pca-self」）或者从 Oxford5k 上（称为「pca-oxford」）学习得到。我们发现，对于 Oxford5k 数据库，如果从 Paris6k 上学习 PCA 与白化矩阵，无论是对于 \emph{full-query} 还是 \emph{cropped-query} 这种情况，检索结果都会提高。但是 UKB 数据库，由于它和 Oxford5k 数据库和 Paris6k 数据库风格不同，从 Oxford5k 数据库学习到的 PCA 与白化矩阵反而对检索结果有害。图~\ref{fig:pca_self_other_exp} 清楚地展示了这种不同。同时，对于 Paris6k 数据库，我们也有同样的结果，当使用从 Oxford5k 数据库学习到的 PCA 与白化矩阵时，检索的结果也会有所提升。
+我们在 Oxford5k 以及 UKB 数据库上进行了 PCA 与白化对检索影响的实验。对于 Oxford5k 数据库，我们分别从 Oxford5k 数据库本身（分为“full-self”以及“crop-self”两种情况）或者从 Paris6k 数据库（分为“full-paris”以及“crop-paris”两种情况）学习 PCA 与白化矩阵；对于 UKB 数据库，PCA 与白化矩阵则从 UKB 本身（称为“pca-self”）或者从 Oxford5k 上（称为“pca-oxford”）学习得到。我们发现，对于 Oxford5k 数据库，如果从 Paris6k 上学习 PCA 与白化矩阵，无论是对于 \emph{full-query} 还是 \emph{cropped-query} 这种情况，检索结果都会提高。但是 UKB 数据库，由于它和 Oxford5k 数据库和 Paris6k 数据库风格不同，从 Oxford5k 数据库学习到的 PCA 与白化矩阵反而对检索结果有害。图~\ref{fig:pca_self_other_exp} 清楚地展示了这种不同。同时，对于 Paris6k 数据库，我们也有同样的结果，当使用从 Oxford5k 数据库学习到的 PCA 与白化矩阵时，检索的结果也会有所提升。
 
 \subsection{与其他方法的对比} \label{subsec:mfc_compare_soa}
 基于前面的实验结果以及我们的对不同影响因素的分析，我们提出了 \textbf{MFC}：一种多尺度全卷积的图像特征表达方法。对于一张图像，我们不对它进行缩放（\emph{free} 的方式），直接输入到卷积神经网络，然后我们在卷积神经网络的最后一层卷积层的输出的特征图的基础上，提取 4 尺度图像特征表达。在多尺度特征表达中，我们使用最大池化处理特征图，并且使用了区域重叠的策略，我们把区域级别的特征加起来形成尺度特征并归一化，然后把各个尺度的特征求和得到图像特征，再一次归一化。之后，我们学习 PCA 与白化矩阵，对图像特征进行降维。对于不同待测数据库，我们用来学习 PCA 和白化矩阵的数据库也不相同：对于 Oxford5k 及 Oxford105k，我们使用的是 Paris6k；对于 Paris6k 和 UKB，我们使用数据库分别是 Oxford5k 以及 UKB。经过 PCA与白化处理的特征，被再一次归一化，得到最终的特征，这个特征用来报告各种方法的性能。
 
-我们把提出的方法与一些主流的方法进行了比较，这些方法都使用了较低维度的特征，并且没有使用复杂的后处理方法，如几何重排序~\cite{Philbin2007ObjectRW} 以及查询扩展~\cite{Chum2007TotalRA}。我们使用了不同的特征维度，实验结果见表~\ref{table:mfc_compare_with_soa}，「D」代表特征的维度，「full」与「cropped」分别代表 \emph{full-query} 以及 \emph{cropped-query}。和其他方法相比，在不同的特征维度下，我们的方法都取得了不错的检索准确率。
+我们把提出的方法与一些主流的方法进行了比较，这些方法都使用了较低维度的特征，并且没有使用复杂的后处理方法，如几何重排序~\cite{Philbin2007ObjectRW} 以及查询扩展~\cite{Chum2007TotalRA}。我们使用了不同的特征维度，实验结果见表~\ref{table:mfc_compare_with_soa}，“D”代表特征的维度，“full”与“cropped”分别代表 \emph{full-query} 以及 \emph{cropped-query}。和其他方法相比，在不同的特征维度下，我们的方法都取得了不错的检索准确率。
 
 \begin{table}[!t]
 	\centering
-	\caption{与其他方法的对比}
+	\bicaption{与其他方法的对比}{Comparison with other methods}
 	\label{table:mfc_compare_with_soa}
 	\begin{tabular}{lllllllll}
 		\toprule
