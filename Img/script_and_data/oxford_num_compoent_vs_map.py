@@ -41,7 +41,7 @@ print("max mAP {}, npc is {} for crop query pca on self".format( np.max(crop_map
 print("max mAP {}, npc is {} for full query pca on paris".format(np.max(full_map_paris), npc_list[idx_full_paris]))
 print("max mAP {}, npc is {} for full query pca on self".format(np.max(full_map_self), npc_list[idx_full_self]))
 
-fig = plt.figure(figsize=(10, 6.18))
+fig = plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(111)
 
 colors =['#1b9e77', '#d95f02']

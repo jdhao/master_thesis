@@ -30,7 +30,7 @@ print("max accuracy {}, npc is {} for pca on oxford".format(np.max(accuracy_list
 
 colors =['#1b9e77', '#d95f02']
 
-fig = plt.figure(figsize=(10, 6.18))
+fig = plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(111)
 ax.plot(pc_list, accuracy_list_self,  '-o', color = colors[0],label='pca-self')
 ax.plot(pc_list, accuracy_list_oxford,'-^', color=colors[1],label='pca-oxford')
