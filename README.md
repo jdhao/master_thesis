@@ -1,9 +1,7 @@
 # About this repo
 This repo is created to store my master thesis.
 
-# 中国科学院自动化研究所学位论文模板（ LaTeX & Word ）
-
-本模板来自于 [ucasthesis](https://github.com/mohuangrui/ucasthesis)，要获取最新版本以及获取使用帮助，请访问 ucasthesis 的 Github 主页。
+本模板来自于 [ucasthesis](https://github.com/mohuangrui/ucasthesis)，适用于中国科学院大学的毕业论文写作，要获取最新版本以及获取使用帮助，请访问 ucasthesis 的 Github 主页。
 
 # 注意事项
 
