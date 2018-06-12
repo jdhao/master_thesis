@@ -4,7 +4,8 @@ Tmp/
 *.log
 *.synctex.gz
 *.pdf
-!Thesis.pdf
+!signed_thesis.pdf
+!论文签名页.pdf
 *.aux
 *.bbl
 *.lot
